@@ -5,7 +5,7 @@ import rhinoscriptsyntax as rs
 import Rhino
 import itertools
 
-__commandname__ = "vase1"
+__commandname__ = "vase112345"
 
 def Denary2Binary(n):
     '''convert denary integer n to binary string bStr'''
