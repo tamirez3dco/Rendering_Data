@@ -41,7 +41,7 @@ def create_patterns(surface, circle1, circle2, pattern1, pattern2, n_divisions):
     p = rs.AddInterpCrvOnSrf(surface, final_points)
     return p
                                
-def project_spheres(curves, r, distance):
+def project_spheres1(curves, r, distance):
     spheres = []
     l = r * distance
     for crv in curves:
@@ -49,7 +49,19 @@ def project_spheres(curves, r, distance):
         for point in points:
             spheres.append(rs.AddSphere(point, r))
     return spheres
-
+    
+def project_spheres(curves, r, distance):
+    spheres = []
+    l = r * distance
+    for crv in curves:
+        points = rs.DivideCurveLength(crv, l)
+        for point in points:
+            b = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
+            #rs.AddBox(
+            rs.MoveObject(b, point)
+            spheres.append(b)
+    return spheres
+    
 def create_vase(rad, heights):
     p=[]
     for r,h in zip(rad, heights):
@@ -108,6 +120,7 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
+    
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
 
 def RunCommand( is_interactive ):
@@ -128,10 +141,10 @@ def RunCommand( is_interactive ):
     rad2_o = Rhino.Input.Custom.OptionDouble(0.5)
     rad3_o = Rhino.Input.Custom.OptionDouble(0.5)
     rad4_o = Rhino.Input.Custom.OptionDouble(0.5)
-    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
+    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.7)
     n_horizontal_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
     pattern_length_o = Rhino.Input.Custom.OptionDouble(0.5)
-    pattern_value_o = Rhino.Input.Custom.OptionDouble(0.5)
+    pattern_value_o = Rhino.Input.Custom.OptionDouble(0.8)
     
     
     go.AddOptionDouble("rad1", rad1_o)
