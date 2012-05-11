@@ -109,10 +109,10 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
     return (vase, all_spheres)
 
 def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio):
-    rad1 = rad1*6 + 1
-    rad2 = rad2*6 + 1
-    rad3 = rad3*6 + 1
-    rad4 = rad4*6 + 1
+    rad1 = rad1*4.5 + 1
+    rad2 = rad2*4.5 + 1
+    rad3 = rad3*4.5 + 1
+    rad4 = rad4*4.5 + 1
     print n_vertical_divs
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
     print n_vertical_divs
@@ -120,10 +120,13 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
+    sphere_rad = (float(sphere_rad)/5.0) + 0.03
+    sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
     
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
 
 def RunCommand( is_interactive ):
+    #Rhino.FileIO.File3dm.Read('C:\Users\aaviv\Documents\Rendering_Data\Scene\scene17.3dm')
     rad1 = 2.5
     rad2 = 3
     rad3 = 2.8
@@ -137,24 +140,27 @@ def RunCommand( is_interactive ):
    
     go = Rhino.Input.Custom.GetOption()
     
-    rad1_o = Rhino.Input.Custom.OptionDouble(0.5)
+    rad1_o = Rhino.Input.Custom.OptionDouble(0.3)
     rad2_o = Rhino.Input.Custom.OptionDouble(0.5)
-    rad3_o = Rhino.Input.Custom.OptionDouble(0.5)
-    rad4_o = Rhino.Input.Custom.OptionDouble(0.5)
-    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.7)
+    rad3_o = Rhino.Input.Custom.OptionDouble(0.3)
+    rad4_o = Rhino.Input.Custom.OptionDouble(0.6)
+    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
     n_horizontal_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
-    pattern_length_o = Rhino.Input.Custom.OptionDouble(0.5)
-    pattern_value_o = Rhino.Input.Custom.OptionDouble(0.8)
-    
+    pattern_length_o = Rhino.Input.Custom.OptionDouble(0.2)
+    pattern_value_o = Rhino.Input.Custom.OptionDouble(0.3)
+    sphere_rad_o = Rhino.Input.Custom.OptionDouble(0.5)
+    sphere_distance_ratio_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("rad1", rad1_o)
     go.AddOptionDouble("rad2", rad2_o)
     go.AddOptionDouble("rad3", rad3_o)
     go.AddOptionDouble("rad4", rad4_o)
-    go.AddOptionDouble("n_vertical_divs_o",n_vertical_divs_o )
-    go.AddOptionDouble("n_horizontal_divs_o", n_horizontal_divs_o)
-    go.AddOptionDouble("pattern_length_o", pattern_length_o)
-    go.AddOptionDouble("pattern_value_o", pattern_value_o)
+    go.AddOptionDouble("n_vertical_divs",n_vertical_divs_o )
+    go.AddOptionDouble("n_horizontal_divs", n_horizontal_divs_o)
+    go.AddOptionDouble("pattern_length", pattern_length_o)
+    go.AddOptionDouble("pattern_value", pattern_value_o)
+    go.AddOptionDouble("sphere_rad", sphere_rad_o)
+    go.AddOptionDouble("sphere_distance_ratio", sphere_distance_ratio_o)
     
     go.AcceptNothing(True)
     while True:
@@ -169,6 +175,8 @@ def RunCommand( is_interactive ):
     n_horizontal_divs = n_horizontal_divs_o.CurrentValue
     pattern_length = pattern_length_o.CurrentValue
     pattern_value = pattern_value_o.CurrentValue
+    sphere_rad = sphere_rad_o.CurrentValue
+    sphere_distance_ratio = sphere_distance_ratio_o.CurrentValue
     
     rs.EnableRedraw(False)
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
