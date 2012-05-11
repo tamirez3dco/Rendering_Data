@@ -120,8 +120,8 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
-    sphere_rad = (float(sphere_rad)/5.0) + 0.03
-    sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
+    #sphere_rad = (float(sphere_rad)/5.0) + 0.03
+    #sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
     
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
 
@@ -175,8 +175,8 @@ def RunCommand( is_interactive ):
     n_horizontal_divs = n_horizontal_divs_o.CurrentValue
     pattern_length = pattern_length_o.CurrentValue
     pattern_value = pattern_value_o.CurrentValue
-    sphere_rad = sphere_rad_o.CurrentValue
-    sphere_distance_ratio = sphere_distance_ratio_o.CurrentValue
+    asphere_rad = sphere_rad_o.CurrentValue
+    asphere_distance_ratio = sphere_distance_ratio_o.CurrentValue
     
     rs.EnableRedraw(False)
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
