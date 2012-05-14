@@ -59,7 +59,8 @@ def create_pipes(curves, r):
     pipes = []
     for crv in curves:
         print r
-        p = rs.AddPipe(crv, r, r)
+        p = rs.AddPipe(crv, 0, r)
+        #rs.AddPipe(
         pipes.append(p)
     return pipes
 
@@ -193,7 +194,7 @@ def RunCommand( is_interactive ):
     pattern_length = pattern_length_o.CurrentValue
     pattern_value = pattern_value_o.CurrentValue
     sphere_rad = sphere_rad_o.CurrentValue
-     
+    
     rs.EnableRedraw(False)
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad)
     (vase1, vase2, spheres) = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad)
