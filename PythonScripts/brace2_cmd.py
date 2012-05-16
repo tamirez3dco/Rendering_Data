@@ -42,7 +42,7 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad, out_
     
     for p1,p2 in zip(divs1, divs2):
         l = rs.AddLine(p1,p2)
-        pipe = rs.AddPipe(l, 0, div_pipe_rad, cap=0)
+        pipe = rs.AddPipe(l, 0, div_pipe_rad, cap=2)
         rs.DeleteObject(l)
         pipes.append(pipe)
         
