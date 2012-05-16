@@ -28,8 +28,8 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad, out_
     c1 = rs.AddCircle(p1, in_circle_rad)
     c2 = rs.AddCircle(p2, out_circle_rad)
     
-    in_pipe = rs.AddPipe(c1, 0, in_pipe_rad, cap=2)
-    out_pipe = rs.AddPipe(c2, 0, out_pipe_rad, cap=2)
+    in_pipe = rs.AddPipe(c1, 0, in_pipe_rad, cap=0)
+    out_pipe = rs.AddPipe(c2, 0, out_pipe_rad, cap=0)
     pipes = [in_pipe, out_pipe]
    
     divs1 = rs.DivideCurve(c1, n_circle_divisions, create_points=False)
@@ -42,7 +42,7 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad, out_
     
     for p1,p2 in zip(divs1, divs2):
         l = rs.AddLine(p1,p2)
-        pipe = rs.AddPipe(l, 0, div_pipe_rad, cap=2)
+        pipe = rs.AddPipe(l, 0, div_pipe_rad, cap=0)
         rs.DeleteObject(l)
         pipes.append(pipe)
         
@@ -59,7 +59,7 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad, out_
     width = (bb[1][0] - bb[0][0])-0.2
     #print width
     min_ring_divisions = max(10,math.ceil(circum/width)+1)
-    max_ring_divisions = (min_ring_divisions-1)*2
+    max_ring_divisions = min((min_ring_divisions-1)*3,30)
     n_ring_divisions = int(min_ring_divisions + (n_ring_divisions * (max_ring_divisions - min_ring_divisions)))
     
     for i in range(1,n_ring_divisions):
