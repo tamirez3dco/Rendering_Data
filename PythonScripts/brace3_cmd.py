@@ -6,18 +6,18 @@ import rhinoscriptsyntax as rs
 import Rhino
 import itertools
 
-__commandname__ = "brace2"
+__commandname__ = "brace3"
 
 def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad_x, out_circle_rad_x, in_circle_rad_y, out_circle_rad_y, div_pipe_rad, in_pipe_rad, out_pipe_rad, division_shift):
     ring_rad_diff = ring_rad_diff*3
     #n_ring_divisions = int(math.floor((14 * n_ring_divisions) + 10))
     n_circle_divisions = int(math.floor((17 * n_circle_divisions) + 3))
-    in_circle_rad = (9*in_circle_rad)+1
-    out_circle_rad_x = (9*out_circle_rad)+1
-    in_circle_rad_x = (9*in_circle_rad)+1
-    out_circle_rad_y = (9*out_circle_rad)+1
-    in_circle_rad_y = (9*in_circle_rad)+1
-    out_circle_rad = (9*out_circle_rad)+1
+    #in_circle_rad = (9*in_circle_rad)+1
+    out_circle_rad_x = (9*out_circle_rad_x)+1
+    in_circle_rad_x = (9*in_circle_rad_x)+1
+    out_circle_rad_y = (9*out_circle_rad_y)+1
+    in_circle_rad_y = (9*in_circle_rad_y)+1
+    #out_circle_rad = (9*out_circle_rad)+1
     div_pipe_rad = (1.1 * div_pipe_rad) + 0.2
     in_pipe_rad = (1.1 * in_pipe_rad) + 0.2
     out_pipe_rad = (1.1 * out_pipe_rad) + 0.2
