@@ -37,7 +37,9 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, in_circle_rad_x, ou
     #out_circle_rad_y = out_circle_rad-1
     
     c1 = rs.AddEllipse(p1, in_circle_rad_x, in_circle_rad_y)
-    c2 = rs.AddEllipse(p1, out_circle_rad_x, out_circle_rad_y)
+    c2 = rs.AddEllipse(p2, out_circle_rad_x, out_circle_rad_y)
+    
+    c1 = rs.RotateObject(c1, p1, 15)
     
     in_pipe = rs.AddPipe(c1, 0, in_pipe_rad, cap=0)
     out_pipe = rs.AddPipe(c2, 0, out_pipe_rad, cap=0)
