@@ -98,19 +98,19 @@ def project_text0(vase):
     return True
     
 
-def project_text(vase):
-    text = "naama"
+def project_text(vase, text, ndivs, div_y, x):
     size = Rhino.Geometry.Surface.GetSurfaceSize(rs.coercesurface(vase))
     boundary = rs.AddRectangle(rs.WorldXYPlane(), size[1], size[2])
     
     letters = list(text)
     letter_ncurves = []
+    height = size[2]/ndivs
     for letter in letters:
-        curves = create_text_curves("m" + letter)
+        curves = create_text_curves("m" + letter, height, x, height*div_y)
         letter_ncurves.append(len(curves)-1)
         rs.DeleteObjects(curves)
         
-    curves = create_text_curves(text)
+    curves = create_text_curves(text, height, x, height*div_y)
     start=0
     splitted_vase = vase
     all_extruded = []
@@ -119,6 +119,7 @@ def project_text(vase):
         start = start+letter_ncurves[i]
         proj_curves = apply_crv(splitted_vase, boundary, letter_curves)
         ids = proj_curves[:letter_ncurves[i]]
+        #rs.AddPipe(ids[0],[0],[0.1])
         print ids
         new_srf = split_srf(splitted_vase, ids)
         splitted_vase = new_srf[0]
@@ -153,9 +154,9 @@ def split_srf(srf, curves):
     rs.Command(cmd)
     return get_command_objects(serial)
     
-def create_text_curves(text):
-    point = (7,4,0)
-    cmd = "-_TextObject Height=2 %s %s Enter" % (text, point2str(point))
+def create_text_curves(text, height, x, y):
+    point = (x,y,0)
+    cmd = "-_TextObject Height=%s %s %s Enter" % (height, text, point2str(point))
     serial = get_serial()
     print cmd
     rs.Command(cmd)
@@ -196,13 +197,13 @@ def get_vase_circles(curve, n_circles):
         circles.append(c)
     return circles
     
-def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad):
+def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, text):
     rs.UnselectAllObjects()
     rad = [rad1, rad2, rad3, rad4]
     heights = [0, 3, 6, 10]
     
     (vase1, curve) = create_vase(rad, heights)
-    vase_model_parts = project_text(vase1)
+    vase_model_parts = project_text(vase1, text, n_vertical_divs, 2, 7)
     #extruded_text.append(vase1)
     #circles = get_vase_circles(curve, n_vertical_divs)
 
@@ -213,7 +214,6 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     rad2 = rad2*4.5 + 1
     rad3 = rad3*4.5 + 1
     rad4 = rad4*4.5 + 1
-    print n_vertical_divs
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
     print n_vertical_divs
     n_horizontal_divs = int(math.ceil(n_horizontal_divs*12+3)) * 2
@@ -246,7 +246,8 @@ def RunCommand( is_interactive ):
     pattern_length_o = Rhino.Input.Custom.OptionDouble(0.2)
     pattern_value_o = Rhino.Input.Custom.OptionDouble(0.3)
     sphere_rad_o = Rhino.Input.Custom.OptionDouble(0.5)
-     
+    
+    
     go.AddOptionDouble("rad1", rad1_o)
     go.AddOptionDouble("rad2", rad2_o)
     go.AddOptionDouble("rad3", rad3_o)
@@ -257,11 +258,13 @@ def RunCommand( is_interactive ):
     go.AddOptionDouble("pattern_value", pattern_value_o)
     go.AddOptionDouble("sphere_rad", sphere_rad_o)
     
+    
     go.AcceptNothing(True)
     while True:
         if go.Get()!=Rhino.Input.GetResult.Option:
             break
             
+    
     rad1 = rad1_o.CurrentValue
     rad2 = rad2_o.CurrentValue
     rad3 = rad3_o.CurrentValue
@@ -272,9 +275,12 @@ def RunCommand( is_interactive ):
     pattern_value = pattern_value_o.CurrentValue
     sphere_rad = sphere_rad_o.CurrentValue
     
-    rs.EnableRedraw(False)
+    
+    text = rs.GetString()
+    
+    #rs.EnableRedraw(False)
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad)
-    (vase1) = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad)
+    (vase1) = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, text)
     
     rs.ScaleObjects(vase1, (0,0,0), (3,3,3), copy=False)
     rs.RotateObjects(vase1, (0,0,0), -90, copy=False)
@@ -284,3 +290,5 @@ def RunCommand( is_interactive ):
 
 if( __name__=="__main__" ):
     RunCommand(True)
+    
+#vase_text rad1=0.5 rad2=0.5 rad3=0.5 rad4=0.5 n_vertical_divs=0.5 n_horizontal_divs=0.5 pattern_length=0.5 pattern_value=0.5 sphere_rad=0.5 Enter naama Enter
