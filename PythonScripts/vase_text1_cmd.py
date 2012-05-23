@@ -203,7 +203,7 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
     heights = [0, 3, 6, 10]
     
     (vase1, curve) = create_vase(rad, heights)
-    vase_model_parts = project_text(vase1, text, n_vertical_divs, 2, 7)
+    vase_model_parts = project_text(vase1, text, n_vertical_divs, 3, 7.5)
     #extruded_text.append(vase1)
     #circles = get_vase_circles(curve, n_vertical_divs)
 
@@ -241,7 +241,7 @@ def RunCommand( is_interactive ):
     rad2_o = Rhino.Input.Custom.OptionDouble(0.5)
     rad3_o = Rhino.Input.Custom.OptionDouble(0.3)
     rad4_o = Rhino.Input.Custom.OptionDouble(0.6)
-    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
+    n_vertical_divs_o = Rhino.Input.Custom.OptionDouble(0.3)
     n_horizontal_divs_o = Rhino.Input.Custom.OptionDouble(0.5)
     pattern_length_o = Rhino.Input.Custom.OptionDouble(0.2)
     pattern_value_o = Rhino.Input.Custom.OptionDouble(0.3)
