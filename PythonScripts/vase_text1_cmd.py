@@ -156,7 +156,7 @@ def split_srf(srf, curves):
     
 def create_text_curves(text, height, x, y):
     point = (x,y,0)
-    cmd = "-_TextObject _Height=%s _Output=_Curves _FontName=Corbel \"%s\" %s _Enter" % (height, text, point2str(point))
+    cmd = "-_TextObject _Height=%s _Output=_Curves _FontName=Corbel \"%s\" %s" % (height, text, point2str(point))
     serial = get_serial()
     print cmd
     rs.Command(cmd)
