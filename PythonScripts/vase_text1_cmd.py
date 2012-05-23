@@ -111,6 +111,7 @@ def project_text(vase, text, ndivs, div_y, x):
         rs.DeleteObjects(curves)
         
     curves = create_text_curves(text, height, x, height*div_y)
+    return []
     start=0
     splitted_vase = vase
     all_extruded = []
@@ -159,7 +160,7 @@ def create_text_curves(text, height, x, y):
     cmd = "-_TextObject _Height=%s _Output=_Curves _FontName=Corbel \"%s\" %s" % (height, text, point2str(point))
     serial = get_serial()
     print cmd
-    rs.Command(cmd)
+    rs.Command(cmd, False)
     curves = get_command_objects(serial)
     #v = rs.CloseCurve(curves[0],30)
     #map(lambda x: rs.CloseCurve(x, 10), curves)
@@ -221,7 +222,7 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
     sphere_rad = (float(sphere_rad)/5.0) + 0.04
-    
+    #rs.Command(
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad)
 
 def RunCommand( is_interactive ):
