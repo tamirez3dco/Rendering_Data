@@ -8,17 +8,13 @@ import itertools
 
 __commandname__ = "text1"
 
-def point2str(p):
-    return "%s,%s,%s" % (p[0],p[1],p[2])
-
-def create_text_curves(text, height, x, y):
-    point = (x,y,0)
-    cmd = "-_TextObject _Height=%s _Output=_Curves _FontName=Corbel \"%s\" %s" % (height, text, point2str(point))
+def create_text_curves(text):
+    cmd = "-_TextObject \"%s\" 0" % (text)
     curves = rs.Command(cmd)
     return curves
 
 def RunCommand( is_interactive ):
-    create_text_curves("na",2,3,3)
+    create_text_curves("na")
     
 if( __name__=="__main__" ):
     RunCommand(True)
