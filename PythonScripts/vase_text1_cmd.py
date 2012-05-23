@@ -279,6 +279,7 @@ def RunCommand( is_interactive ):
     rad2 = 0.5
     rad3 = 0.3
     rad4 = 0.6
+    n_vertical_divs=0.3
     #text = rs.GetString()
     text = "naama"
     
