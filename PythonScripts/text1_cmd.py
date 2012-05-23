@@ -9,7 +9,7 @@ import itertools
 __commandname__ = "text1"
 
 def create_text_curves(text):
-    cmd = "-_TextObject \"%s\" 0" % (text)
+    cmd = "Enter -TextObject \"%s\" 0" % (text)
     curves = rs.Command(cmd)
     return curves
 
