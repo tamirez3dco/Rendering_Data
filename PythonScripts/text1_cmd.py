@@ -29,18 +29,36 @@ def create_vase(rad, heights):
     rs.DeleteObject(axis)
     return (v1, crv1)
     
+def apply_crv(srf, boundary, curves):
+    curves.append(boundary)
+    curves.append(srf)
+    rs.UnselectAllObjects()
+    rs.SelectObjects(curves)
+    cmd = "-_ApplyCrv"
+    rs.Command(cmd)
+    new_curves = rs.LastCreatedObjects()
+    rs.UnselectAllObjects()
+    rs.DeleteObject(new_curves[len(new_curves)-1])
+    return new_curves
+    
 def create_text_curves(text):
     cmd = "Enter -TextObject \"%s\" 0" % (text)
     rs.Command(cmd)
     return rs.LastCreatedObjects()
 
 def RunCommand( is_interactive ):
-    create_vase([3,4,3,5],[0, 3, 6, 10])
+    (vase, crv) = create_vase([3,4,3,5],[0, 3, 6, 10])
     
     c = create_text_curves("na")
+    rs.DeleteObjects(c)
     c = create_text_curves("gy")
-    c = create_text_curves("nkte")
-    c = create_text_curves("pa")
+    rs.DeleteObjects(c)
+    c = create_text_curves("nmn")
+    
+    size = Rhino.Geometry.Surface.GetSurfaceSize(rs.coercesurface(vase))
+    boundary = rs.AddRectangle(rs.WorldXYPlane(), size[1], size[2])
+    apply_crv(vase, boundary, c)
+    rs.DeleteObjects(c)
     
 if( __name__=="__main__" ):
     RunCommand(True)
