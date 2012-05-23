@@ -275,7 +275,10 @@ def RunCommand( is_interactive ):
     pattern_value = pattern_value_o.CurrentValue
     sphere_rad = sphere_rad_o.CurrentValue
     
-    
+    rad1 = 0.3
+    rad2 = 0.5
+    rad3 = 0.3
+    rad4 = 0.6
     #text = rs.GetString()
     text = "naama"
     
