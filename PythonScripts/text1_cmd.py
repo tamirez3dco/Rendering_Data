@@ -18,15 +18,6 @@ def create_text_curves(text, height, x, y):
     return curves
 
 def RunCommand( is_interactive ):
-    go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.3)
-    go.AddOptionDouble("a1", a1_o)
-    go.AcceptNothing(True)
-    while True:
-        if go.Get()!=Rhino.Input.GetResult.Option:
-            break
-            
-    a1 = a1_o.CurrentValue
     create_text_curves("na",2,3,3)
     
 if( __name__=="__main__" ):
