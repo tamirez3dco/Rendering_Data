@@ -110,6 +110,7 @@ def project_text(vase, text, ndivs, div_y, x):
         letter_ncurves.append(len(curves)-1)
         rs.DeleteObjects(curves)
         
+    return []
     curves = create_text_curves(text, height, x, height*div_y)
     return []
     start=0
