@@ -42,23 +42,24 @@ def apply_crv(srf, boundary, curves):
     return new_curves
     
 def create_text_curves(text):
-    cmd = "Enter -TextObject \"%s\" 0" % (text)
+    cmd = "-TextObject \"%s\" 0" % (text)
     rs.Command(cmd)
     return rs.LastCreatedObjects()
 
 def RunCommand( is_interactive ):
+    rs.UnselectAllObjects()
     (vase, crv) = create_vase([3,4,3,5],[0, 3, 6, 10])
-    
+    rs.UnselectAllObjects()
     c = create_text_curves("na")
-    rs.DeleteObjects(c)
-    c = create_text_curves("gy")
-    rs.DeleteObjects(c)
-    c = create_text_curves("nmn")
+    #rs.DeleteObjects(c)
+    #c = create_text_curves("gy")
+    #rs.DeleteObjects(c)
+    #c = create_text_curves("nmn")
     
     size = Rhino.Geometry.Surface.GetSurfaceSize(rs.coercesurface(vase))
     boundary = rs.AddRectangle(rs.WorldXYPlane(), size[1], size[2])
     apply_crv(vase, boundary, c)
-    rs.DeleteObjects(c)
+    #rs.DeleteObjects(c)
     
 if( __name__=="__main__" ):
     RunCommand(True)
