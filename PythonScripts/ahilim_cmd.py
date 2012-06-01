@@ -26,8 +26,13 @@ def make_hole(srf, uv, radius):
     n = (-n[0],-n[1],-n[2])
     s = rs.ExtrudeCurveStraight(c1, rs.CircleCenterPoint(c1), n)
     ss = rs.SplitBrep(srf, s, True)
-    rs.DeleteObjects([c1, s, ss[1]])
-    return ss[0]
+    rs.DeleteObjects([c1, s])
+    if rs.SurfaceArea(ss[0])>rs.SurfaceArea(ss[1]):
+        rs.DeleteObject(ss[1])
+        return ss[0]
+        
+    rs.DeleteObject(ss[0])
+    return ss[1]
     
 def RandomPointsOnSurface(srf, n):
     u = rs.SurfaceDomain(srf,0)
