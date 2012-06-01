@@ -42,7 +42,7 @@ def RandomPointsOnSurface(srf, n):
     
 def RunCommand( is_interactive ):
     rs.EnableRedraw(False)
-    n_holes = 30
+    n_holes = 3
     hole_radius = 5
     (vase, crv) = create_vase([20,30,30,20],[0,20,40,60])
     uv = RandomPointsOnSurface(vase, n_holes)
