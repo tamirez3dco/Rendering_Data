@@ -150,6 +150,7 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
     rs.DeleteObjects([vase_crv, out_crv])
     
     all_spheres.append(vase_srf)
+    rs.ScaleObjects(all_spheres, (0,0,0), (3,3,3), False)
     rotate_all(all_spheres, n_horizontal_divs)
     
     return all_spheres
@@ -229,7 +230,7 @@ def RunCommand( is_interactive ):
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
     all = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
     
-    #rs.ScaleObjects(spheres, (0,0,0), (3,3,3), False)
+    #rs.ScaleObjects(all, (0,0,0), (3,3,3), False)
     #rs.RotateObjects(spheres, (0,0,0), 90, copy=False)
     #rs.RotateObjects(spheres, (0,0,0), -30, axis=(10,4,0), copy=False)
     
