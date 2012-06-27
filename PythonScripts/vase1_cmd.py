@@ -39,39 +39,72 @@ def create_patterns(surface, circle1, circle2, pattern1, pattern2, n_divisions):
             final_points.append(points[1][i])         
     
     p = rs.AddInterpCrvOnSrf(surface, final_points)
-    return p
+    rs.DivideCurve(p,3)
+    d = rs.CurveDomain(p)
+    #print d
+    np = rs.SplitCurve(p,[d[1]/3,2*(d[1]/3)])
+    rs.DeleteObjects([np[0],np[2]])
+    return np[1]
                                
-def project_spheres1(curves, r, distance):
-    spheres = []
-    l = r * distance
-    for crv in curves:
-        points = rs.DivideCurveLength(crv, l)
-        for point in points:
-            spheres.append(rs.AddSphere(point, r))
-    return spheres
     
 def project_spheres(curves, r, distance):
     spheres = []
     l = r * distance
     for crv in curves:
-        points = rs.DivideCurveLength(crv, l)
-        for point in points:
-            b = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
-            #rs.AddBox(
-            rs.MoveObject(b, point)
+        n = int(math.ceil(rs.CurveLength(crv) / l))
+        points = rs.DivideCurve(crv, n)
+        for j in range(n):
+        #for point in points:
+            b = rs.AddSphere(points[j], r)
             spheres.append(b)
+            
     return spheres
     
-def create_vase(rad, heights):
-    p=[]
-    for r,h in zip(rad, heights):
-        p.append((r,0,h))
-    crv = rs.AddInterpCurve(p)
+def create_vase_surfaces(vase_crv, out_crv, n_divs):
     axis = rs.AddLine((0,0,0),(0,0,10))
-    v = rs.AddRevSrf(crv, axis)
-    rs.FlipSurface(v, flip=True)
-    return (v, crv)
-
+    angle1 = (360/n_divs)*2
+    angle2 = angle1*3
+    out_srf = rs.AddRevSrf(out_crv, axis, 0, angle2)
+    vase_srf = rs.AddRevSrf(vase_crv, axis, angle1, angle1*2)
+    rs.DeleteObject(axis)
+    return (vase_srf, out_srf)
+    
+def create_vase_curves(rad, heights):
+    axis = rs.AddLine((0,0,0),(0,0,10))
+    p_out=[]
+    p_in=[]
+    for r,h in zip(rad, heights):
+        p_out.append((r,0,h))
+        p_in.append((r-0.2,0,h))
+    
+    crv_out = rs.AddInterpCurve(p_out)
+    crv_in = rs.AddInterpCurve(p_in)
+    
+    p = rs.CurveClosestPoint(crv_out,rs.CurveEndPoint(crv_in))
+    crv_out_sp = rs.SplitCurve(crv_out, p)
+    crv_out = crv_out_sp[0]
+    
+    p = rs.CurveClosestPoint(crv_in,(rad[0],0,0))
+    crv_in_sp = rs.SplitCurve(crv_in, p)
+    crv_in = crv_in_sp[1]
+    #rs.AddPoint(p)
+    
+    connect_line = rs.AddLine(rs.CurveEndPoint(crv_out), rs.CurveEndPoint(crv_in))
+   
+    frame = rs.CurveFrame(connect_line, rs.CurveParameter(connect_line,0.5))
+    arc = rs.AddArc(frame,rs.CurveLength(connect_line)/2,-180)
+    
+    sp_in = rs.EvaluateCurve(crv_in,rs.CurveParameter(crv_in,0))
+    print sp_in
+    base_out = rs.AddLine((rad[0],0,0), (0,0,0))
+    base_in = rs.AddLine(sp_in, (0,0,sp_in[2]))
+    
+    crv_vase = rs.JoinCurves([base_out, crv_out, arc, crv_in, base_in])
+    
+    rs.DeleteObjects([crv_out_sp[1], connect_line, axis, crv_in, arc])
+    
+    return (crv_vase, crv_out)
+    
 def get_vase_circles(curve, n_circles):
     points = rs.DivideCurve(curve, n_circles)
     circles = []
@@ -80,14 +113,19 @@ def get_vase_circles(curve, n_circles):
         circles.append(c)
     return circles
     
+def rotate_all(objects, n_divs):
+    angle = (360/n_divs)*2
+    for i in range(1,(n_divs/2)):
+        rs.RotateObjects(objects, (0,0,0), angle*i, None, True)
+
 def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio):
-    
-    
     rad = [rad1, rad2, rad3, rad4]
     heights = [0, 3, 6, 10]
+    vase_angle = (360/n_horizontal_divs)*6
+    (vase_crv, out_crv) = create_vase_curves(rad, heights)
+    (vase_srf, out_srf) = create_vase_surfaces(vase_crv, out_crv, n_horizontal_divs)
     
-    (vase, curve) = create_vase(rad, heights)
-    circles = get_vase_circles(curve, n_vertical_divs)
+    circles = get_vase_circles(out_crv, n_vertical_divs)
     p1 = int2bool(2,2)
     p2 = int2bool(1,2)
     
@@ -101,27 +139,36 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
                 if(i+start > end or j+start > end): 
                     continue
                 if conn_pattern[i*pattern_length + j]:
-                    curve = create_patterns(vase, circles[i+start], circles[j+start], p1, p2, n_horizontal_divs)
+                    curve = create_patterns(out_srf, circles[i+start], circles[j+start], p1, p2, n_horizontal_divs)
                     spheres.append(project_spheres([curve], sphere_rad, sphere_distance_ratio))
-                    
+                    rs.DeleteObject(curve)
         start=start+pattern_length
     all_spheres = list(itertools.chain(*spheres))
-    return (vase, all_spheres)
+    
+    rs.DeleteObjects(circles)
+    rs.DeleteObject(out_srf)
+    rs.DeleteObjects([vase_crv, out_crv])
+    
+    all_spheres.append(vase_srf)
+    rotate_all(all_spheres, n_horizontal_divs)
+    
+    return all_spheres
+    
 
 def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio):
     rad1 = rad1*4.5 + 1
     rad2 = rad2*4.5 + 1
     rad3 = rad3*4.5 + 1
     rad4 = rad4*4.5 + 1
-    print n_vertical_divs
+    # n_vertical_divs
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
-    print n_vertical_divs
+    #print n_vertical_divs
     n_horizontal_divs = int(math.ceil(n_horizontal_divs*12+3)) * 2
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
-    print pattern_length
+    #print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
-    #sphere_rad = (float(sphere_rad)/5.0) + 0.03
-    #sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
+    sphere_rad = (float(sphere_rad)/5.0) + 0.03
+    sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
     
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
 
@@ -175,17 +222,16 @@ def RunCommand( is_interactive ):
     n_horizontal_divs = n_horizontal_divs_o.CurrentValue
     pattern_length = pattern_length_o.CurrentValue
     pattern_value = pattern_value_o.CurrentValue
-    asphere_rad = sphere_rad_o.CurrentValue
-    asphere_distance_ratio = sphere_distance_ratio_o.CurrentValue
+    sphere_rad = sphere_rad_o.CurrentValue
+    sphere_distance_ratio = sphere_distance_ratio_o.CurrentValue
     
     rs.EnableRedraw(False)
     (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio) = normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
-    (vase, spheres) = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
+    all = run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
     
-    spheres.append(vase)
-    rs.ScaleObjects(spheres, (0,0,0), (3,3,3), False)
+    #rs.ScaleObjects(spheres, (0,0,0), (3,3,3), False)
     #rs.RotateObjects(spheres, (0,0,0), 90, copy=False)
     #rs.RotateObjects(spheres, (0,0,0), -30, axis=(10,4,0), copy=False)
     
-    print "n_sphers = %s" % len(spheres)
+    #print "n_sphers = %s" % len(spheres)
     rs.EnableRedraw(True)
