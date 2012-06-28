@@ -70,12 +70,13 @@ def create_vase_surfaces(vase_crv, out_crv, n_divs):
     return (vase_srf, out_srf)
     
 def create_vase_curves(rad, heights):
+    width = 0.2 
     axis = rs.AddLine((0,0,0),(0,0,10))
     p_out=[]
     p_in=[]
     for r,h in zip(rad, heights):
         p_out.append((r,0,h))
-        p_in.append((r-0.2,0,h))
+        p_in.append((r-width,0,h))
     
     crv_out = rs.AddInterpCurve(p_out)
     crv_in = rs.AddInterpCurve(p_in)
@@ -84,7 +85,9 @@ def create_vase_curves(rad, heights):
     crv_out_sp = rs.SplitCurve(crv_out, p)
     crv_out = crv_out_sp[0]
     
-    p = rs.CurveClosestPoint(crv_in,(rad[0],0,0))
+    ins = rs.CurveCurveIntersection(crv_in, rs.AddLine((0,0,width), (rad[0],0,width)))
+    p = rs.CurveClosestPoint(crv_in, ins[0][1])
+    
     crv_in_sp = rs.SplitCurve(crv_in, p)
     crv_in = crv_in_sp[1]
     #rs.AddPoint(p)
@@ -115,7 +118,7 @@ def get_vase_circles(curve, n_circles):
     
 def rotate_all(objects, n_divs):
     angle = (360/n_divs)*2
-    for i in range(1,(n_divs/2)):
+    for i in range(1,int(n_divs/2)):
         rs.RotateObjects(objects, (0,0,0), angle*i, None, True)
 
 def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio):
@@ -236,3 +239,6 @@ def RunCommand( is_interactive ):
     
     #print "n_sphers = %s" % len(spheres)
     rs.EnableRedraw(True)
+    
+if( __name__=="__main__" ):
+    RunCommand(True)
