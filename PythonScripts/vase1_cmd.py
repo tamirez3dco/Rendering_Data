@@ -70,7 +70,7 @@ def project_spheres(curves, r, distance):
 def create_vase_surfaces(vase_crv, out_crv, n_divs):
     axis = rs.AddLine((0,0,0),(0,0,10))
     angle1 = (360/n_divs)*2
-    angle2 = angle1*6
+    angle2 = angle1*5
     out_srf = rs.AddRevSrf(out_crv, axis, 0, angle2)
     vase_srf = rs.AddRevSrf(vase_crv, axis, angle1*2, angle1*3)
     out_surf_seg = rs.AddRevSrf(out_crv, axis, angle1*2, angle1*3)
@@ -134,7 +134,7 @@ def rotate_all(objects, n_divs):
 def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio):
     rad = [rad1, rad2, rad3, rad4]
     heights = [0, 3, 6, 10]
-    vase_angle = (360/n_horizontal_divs)*6
+    
     (vase_crv, out_crv) = create_vase_curves(rad, heights)
     (vase_srf, out_srf, out_surf_seg) = create_vase_surfaces(vase_crv, out_crv, n_horizontal_divs)
     
@@ -178,7 +178,7 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
     #print n_vertical_divs
     #n_horizontal_divs = int(math.ceil(n_horizontal_divs*12+3)) * 2
-    n_horizontal_divs = int(math.floor(n_horizontal_divs*5+1)) * 6
+    n_horizontal_divs = int(math.floor(n_horizontal_divs*5+2)) * 5
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     #print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
