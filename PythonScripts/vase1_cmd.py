@@ -83,7 +83,8 @@ def create_vase_curves(rad, heights):
     
     p = rs.CurveClosestPoint(crv_out,rs.CurveEndPoint(crv_in))
     crv_out_sp = rs.SplitCurve(crv_out, p)
-    crv_out = crv_out_sp[0]
+    if crv_out_sp != None:
+        crv_out = crv_out_sp[0]
     
     ins = rs.CurveCurveIntersection(crv_in, rs.AddLine((0,0,width), (rad[0],0,width)))
     p = rs.CurveClosestPoint(crv_in, ins[0][1])
