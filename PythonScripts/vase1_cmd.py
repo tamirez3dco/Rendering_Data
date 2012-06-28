@@ -105,7 +105,7 @@ def create_vase_curves(rad, heights):
     
     crv_vase = rs.JoinCurves([base_out, crv_out, arc, crv_in, base_in])
     
-    rs.DeleteObjects([crv_out_sp[1], connect_line, axis, crv_in, arc])
+    rs.DeleteObjects([connect_line, axis, crv_in, arc])
     
     return (crv_vase, crv_out)
     
