@@ -70,7 +70,7 @@ def create_vase_surfaces(vase_crv, out_crv, n_divs):
     return (vase_srf, out_srf)
     
 def create_vase_curves(rad, heights):
-    width = 0.2 
+    width = 0.2
     axis = rs.AddLine((0,0,0),(0,0,10))
     p_out=[]
     p_in=[]
@@ -86,13 +86,14 @@ def create_vase_curves(rad, heights):
     if crv_out_sp != None:
         crv_out = crv_out_sp[0]
     
-    ins = rs.CurveCurveIntersection(crv_in, rs.AddLine((0,0,width), (rad[0],0,width)))
+    ins = rs.CurveCurveIntersection(crv_in, rs.AddLine((0,0,width+0.1), (rad[0]+1,0,width+0.1)))
     p = rs.CurveClosestPoint(crv_in, ins[0][1])
-    
+    #rs.AddPoint(ins[0][1])
     crv_in_sp = rs.SplitCurve(crv_in, p)
     crv_in = crv_in_sp[1]
     #rs.AddPoint(p)
-    
+    #rs.AddPoint(rs.CurveEndPoint(crv_out))
+    #rs.AddPoint(rs.CurveEndPoint(crv_in))
     connect_line = rs.AddLine(rs.CurveEndPoint(crv_out), rs.CurveEndPoint(crv_in))
    
     frame = rs.CurveFrame(connect_line, rs.CurveParameter(connect_line,0.5))
