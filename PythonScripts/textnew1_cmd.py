@@ -69,10 +69,10 @@ def create_bounds(surfaces):
     rs.CapPlanarHoles(s1)
     rs.BooleanDifference([s1],[s0])
     
-def run():
+def run(text):
     #text = "abcdefghijklmnopqrstuvwxyz"
     #text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    text = "naama"
+    #text = "naama"
     path = rs.AddLine((0,0,0),(0,0,0.1))
     curve_nums = num_letter_curves(text)
     curves = create_text_curves(text)
@@ -82,8 +82,20 @@ def run():
     return True
     
 def RunCommand( is_interactive ):
+    go = Rhino.Input.Custom.GetOption()
+    a1_o = Rhino.Input.Custom.OptionDouble(0.3)
+    go.AddOptionDouble("a1", a1_o)
+    go.AcceptNothing(True)
+    while True:
+        if go.Get()!=Rhino.Input.GetResult.Option:
+            break
+            
+    a1 = a1_o.CurrentValue
+    
+    text = rs.GetString()
+    
     rs.EnableRedraw(False)
-    run()
+    run(text)
     rs.EnableRedraw(True)
     
 if( __name__=="__main__" ):
