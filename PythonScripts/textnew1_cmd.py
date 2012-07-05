@@ -82,32 +82,36 @@ def create_bounds(surfaces, width, distance, n_rects):
         res.append(bound[0])
     return res
 
-def fit_scene(surfaces, scale):
+def fit_scene(surfaces, scale, trs):
+    rs.MoveObjects(surfaces, trs)
     rs.ScaleObjects(surfaces,(0,0,0), (scale,scale,scale))
-    rs.RotateObjects(surfaces, (0,0,0), 19)
-    rs.MoveObject(surfaces, (-21,22,0))
+    #rs.VectorCreate(
+    rs.RotateObjects(surfaces, (0,0,0), -50, rs.VectorCreate((0,0,0),(10,0,0)))
+    rs.RotateObjects(surfaces, (0,0,0), 20.4)
+    
+    rs.MoveObjects(surfaces, (-19,-10,0))
 
 def find_scale(bound):
-    max_width = 50.0
+    max_width = 43.0
     b = rs.BoundingBox(bound)
     bb_width = b[1][0] - b[0][0]
-    scale = max_width / bb_width 
-    return scale
-    print bb_width
+    scale = max_width / bb_width
+    trs = (-b[0][0], -b[0][1], 0)
+    return (scale, trs)
     
 def run(text, width, distance, n_rects):
     curve_nums = num_letter_curves(text)
     curves = create_text_curves(text)
     surfaces = create_text_surfaces(curves, curve_nums)
     bounds = create_bounds(surfaces, width, distance, n_rects)
-    scale = find_scale(bounds[len(bounds)-1])
-    fit_scene(surfaces, scale)
-    fit_scene(bounds, scale)
+    (scale, trs) = find_scale(bounds[len(bounds)-1])
+    fit_scene(surfaces, scale, trs)
+    fit_scene(bounds, scale, trs)
     find_scale(bounds[len(bounds)-1])
     return True
 
 def normalize_inputs(width, distance, n_rects):
-    width = width*0.45 + 0.02
+    width = width*0.45 + 0.05
     distance = distance*0.45 + 0.02
     n_rects = int(math.floor((12 * n_rects) + 1))
     return (width, distance, n_rects)
