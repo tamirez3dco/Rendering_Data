@@ -32,8 +32,8 @@ def create_text_surfaces(curves, letters):
         letter_surfaces = []
         for crv in letter_curves:
             s = rs.ExtrudeCurve(crv, path)
-            rs.ScaleObject(s,(0,0,0), (10,10,10))
-            rs.MoveObject(s, (-27,20,0))
+            #rs.ScaleObject(s,(0,0,0), (10,10,10))
+            #rs.MoveObject(s, (-27,20,0))
             rs.CapPlanarHoles(s)
             letter_surfaces.append(s)
         c_index += letter
@@ -45,8 +45,7 @@ def create_text_surfaces(curves, letters):
             rs.DeleteObject(srf)
             if len(ins) != 0:
                 s = rs.BooleanDifference([letter_surfaces[0]],letter_surfaces[1:len(letter_surfaces)])
-                res.append(s)
-                
+             
         res.append(s)
             
     return res
@@ -58,11 +57,11 @@ def create_bounds(surfaces, width, distance, n_rects):
     points = box[0:4]
     points.append(box[0])
     #curves = []
-    margin_left = 1
-    margin_top = 0.2
+    margin_left = 0.1
+    margin_top = 0.02
     #distance = 1
     distance = width + distance
-    #n_rects=2
+    res=[]
     for j in range(n_rects):
         curves = []
         for k in range(2):
@@ -78,20 +77,37 @@ def create_bounds(surfaces, width, distance, n_rects):
         s1 = rs.ExtrudeCurve(curves[1], path)
         rs.CapPlanarHoles(s0)
         rs.CapPlanarHoles(s1)
-        rs.BooleanDifference([s1],[s0])
+        bound = rs.BooleanDifference([s1],[s0])
+        #rs.BooleanDifference(
+        res.append(bound[0])
+    return res
+
+def fit_scene(surfaces, scale):
+    rs.ScaleObjects(surfaces,(0,0,0), (scale,scale,scale))
+    rs.MoveObject(surfaces, (-16,27,0))
+
+def find_scale(bound):
+    max_width = 56.0
+    b = rs.BoundingBox(bound)
+    bb_width = b[1][0] - b[0][0]
+    scale = max_width / bb_width 
+    return scale
+    print bb_width
     
 def run(text, width, distance, n_rects):
-    path = rs.AddLine((0,0,0),(0,0,0.1))
     curve_nums = num_letter_curves(text)
     curves = create_text_curves(text)
     surfaces = create_text_surfaces(curves, curve_nums)
-    create_bounds(surfaces, width, distance, n_rects)
-    
+    bounds = create_bounds(surfaces, width, distance, n_rects)
+    scale = find_scale(bounds[len(bounds)-1])
+    fit_scene(surfaces, scale)
+    fit_scene(bounds, scale)
+    find_scale(bounds[len(bounds)-1])
     return True
 
 def normalize_inputs(width, distance, n_rects):
-    width = width*4.5 + 0.2
-    distance = distance*4.5 + 0.2
+    width = width*0.45 + 0.02
+    distance = distance*0.45 + 0.02
     n_rects = int(math.floor((12 * n_rects) + 1))
     return (width, distance, n_rects)
 
