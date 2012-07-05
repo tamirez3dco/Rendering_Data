@@ -88,7 +88,7 @@ def fit_scene(surfaces, scale):
     rs.MoveObject(surfaces, (-21,22,0))
 
 def find_scale(bound):
-    max_width = 61.0
+    max_width = 56.0
     b = rs.BoundingBox(bound)
     bb_width = b[1][0] - b[0][0]
     scale = max_width / bb_width 
