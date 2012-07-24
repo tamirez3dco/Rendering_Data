@@ -54,7 +54,27 @@ def create_patterns(surface, segment, circle1, circle2, pattern1, pattern2, n_di
     return np[1]
                                
     
-def project_spheres(curves, r, distance):
+def project_shape(shape, point, surface):
+    #new_shape = rs.CopyObject(shape)
+    
+    uv = rs.SurfaceClosestPoint(surface, point)
+    frame = rs.SurfaceFrame(surface, uv)
+    
+    xform = rs.XformRotation1(rs.WorldXYPlane(),frame)
+    new_shape = rs.TransformObject(shape, xform, True)
+    
+    return new_shape
+    
+def create_pattern_base_shape(r):
+    #shape = rs.AddSphere((0,0,0), r)
+    shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
+    #shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
+    #shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
+    
+    return shape
+    
+def project_spheres(curves, r, distance, vase_surface):
+    shape = create_pattern_base_shape(r)
     spheres = []
     l = r * distance
     for crv in curves:
@@ -62,7 +82,8 @@ def project_spheres(curves, r, distance):
         points = rs.DivideCurve(crv, n)
         for j in range(n):
         #for point in points:
-            b = rs.AddSphere(points[j], r)
+            b = project_shape(shape, points[j], vase_surface)
+            #b = rs.AddSphere(points[j], r)
             spheres.append(b)
             
     return spheres
@@ -153,7 +174,7 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
                     continue
                 if conn_pattern[i*pattern_length + j]:
                     curve = create_patterns(out_srf, out_surf_seg, circles[i+start], circles[j+start], p1, p2, n_horizontal_divs)
-                    spheres.append(project_spheres([curve], sphere_rad, sphere_distance_ratio))
+                    spheres.append(project_spheres([curve], sphere_rad, sphere_distance_ratio, out_srf))
                     rs.DeleteObject(curve)
         start=start+pattern_length
     all_spheres = list(itertools.chain(*spheres))
