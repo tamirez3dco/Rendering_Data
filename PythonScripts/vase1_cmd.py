@@ -74,9 +74,9 @@ def project_shape(shape, point, surface):
     return new_shape
     
 def create_pattern_base_shape(r):
-    #shape = rs.AddSphere((0,0,0), r)
+    shape = rs.AddSphere((0,0,0), r)
     #shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
-    shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
+    #shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
     #shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
     
     return shape
@@ -98,7 +98,9 @@ def project_spheres(curves, r, distance, vase_surface):
     
 def create_vase_surfaces(vase_crv, out_crv, n_divs):
     axis = rs.AddLine((0,0,0),(0,0,10))
-    angle1 = (360/n_divs)*2
+    angle1 = (360.0/float(n_divs))*2.0
+    print n_divs
+    print angle1
     angle2 = angle1*5
     out_srf = rs.AddRevSrf(out_crv, axis, 0, angle2)
     vase_srf = rs.AddRevSrf(vase_crv, axis, angle1*2, angle1*3)
@@ -157,6 +159,7 @@ def get_vase_circles(curve, n_circles):
     
 def rotate_all(objects, n_divs):
     angle = (360.0/float(n_divs))*2.0
+    print angle
     for i in range(1,int(n_divs/2)):
         rs.RotateObjects(objects, (0,0,0), angle*i, None, True)
 
@@ -209,7 +212,8 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
     #print n_vertical_divs
     #n_horizontal_divs = int(math.ceil(n_horizontal_divs*12+3)) * 2
-    n_horizontal_divs = int(math.floor(n_horizontal_divs*5+2)) * 5
+    n_horizontal_divs = int(math.floor(n_horizontal_divs*5+2)) * 6
+    #n_horizontal_divs = math.floor(360.0 / float(n_horizontal_divs)) * 
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     #print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
