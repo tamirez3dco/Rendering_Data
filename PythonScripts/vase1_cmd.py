@@ -40,9 +40,14 @@ def create_patterns(surface, segment, circle1, circle2, pattern1, pattern2, n_di
     
     crv = rs.AddInterpCrvOnSrf(surface, final_points)
     ins = rs.CurveSurfaceIntersection(crv, segment)
+    
     #rs.CurveSurfaceIntersection(
-    start_p = rs.CurveClosestPoint(crv, ins[0][1])
-    end_p = rs.CurveClosestPoint(crv, ins[0][2])
+    if(ins[0][0]==2):
+        start_p = rs.CurveClosestPoint(crv, ins[0][1])
+        end_p = rs.CurveClosestPoint(crv, ins[0][2])
+    else:
+        start_p = rs.CurveClosestPoint(crv, ins[0][1])
+        end_p = rs.CurveClosestPoint(crv, ins[0][3])
     
     np = rs.SplitCurve(crv, [start_p, end_p])
   
