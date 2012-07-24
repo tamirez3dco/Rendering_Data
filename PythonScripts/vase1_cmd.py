@@ -49,8 +49,11 @@ def create_patterns(surface, segment, circle1, circle2, pattern1, pattern2, n_di
         start_p = rs.CurveClosestPoint(crv, ins[0][1])
         end_p = rs.CurveClosestPoint(crv, ins[0][3])
     
+    
+    
     np = rs.SplitCurve(crv, [start_p, end_p])
-  
+    if (len(np)!=3):
+        return None
     #rs.DivideCurve(crv,3)
     #d = rs.CurveDomain(crv)
     #print d
@@ -72,9 +75,9 @@ def project_shape(shape, point, surface):
     
 def create_pattern_base_shape(r):
     #shape = rs.AddSphere((0,0,0), r)
-    shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
+    #shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
     #shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
-    #shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
+    shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
     
     return shape
     
@@ -179,6 +182,8 @@ def run(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_leng
                     continue
                 if conn_pattern[i*pattern_length + j]:
                     curve = create_patterns(out_srf, out_surf_seg, circles[i+start], circles[j+start], p1, p2, n_horizontal_divs)
+                    if curve==None: 
+                        continue
                     spheres.append(project_spheres([curve], sphere_rad, sphere_distance_ratio, out_srf))
                     rs.DeleteObject(curve)
         start=start+pattern_length
