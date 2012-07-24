@@ -76,8 +76,8 @@ def project_shape(shape, point, surface):
 def create_pattern_base_shape(r):
     #shape = rs.AddSphere((0,0,0), r)
     #shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
-    #shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
-    shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
+    shape = rs.AddCylinder(rs.WorldXYPlane(), r, r)
+    #shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
     
     return shape
     
