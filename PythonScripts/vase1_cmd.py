@@ -75,8 +75,8 @@ def project_shape(shape, point, surface):
     
 def create_pattern_base_shape(r):
     #shape = rs.AddSphere((0,0,0), r)
-    #shape = rs.AddBox([(-r,-r,-r),(r,-r,-r),(r,r,-r),(-r,r,-r),(-r,-r,r),(r,-r,r),(r,r,r),(-r,r,r)])
-    shape = rs.AddCylinder(rs.WorldXYPlane(), 0.03, r) 
+    shape = rs.AddBox([(-r,-r,-0.04),(r,-r,-0.04),(r,r,-0.04),(-r,r,-0.04),(-r,-r,0.04),(r,-r,0.04),(r,r,0.04),(-r,r,0.04)])
+    #shape = rs.AddCylinder(rs.WorldXYPlane(), 0.04, r) 
     #shape = rs.AddTorus(rs.WorldXYPlane(), r, r*0.3)
     
     return shape
@@ -212,12 +212,12 @@ def normalize_inputs(rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs,
     n_vertical_divs = int(math.ceil(n_vertical_divs*12+3))
     #print n_vertical_divs
     #n_horizontal_divs = int(math.ceil(n_horizontal_divs*12+3)) * 2
-    n_horizontal_divs = int(math.floor(n_horizontal_divs*5+2)) * 6
+    n_horizontal_divs = int(math.floor(n_horizontal_divs*3+2)) * 6
     #n_horizontal_divs = math.floor(360.0 / float(n_horizontal_divs)) * 
     pattern_length = int(math.floor((n_vertical_divs-2)*pattern_length+1))
     #print pattern_length
     pattern_value = int((math.pow(2,pattern_length*pattern_length)-1) * pattern_value) + 1
-    sphere_rad = (float(sphere_rad)/5.0) + 0.03
+    sphere_rad = (float(sphere_rad)/5.0) + 0.06
     sphere_distance_ratio = float(sphere_distance_ratio)*4.5 + 1.5
     
     return (rad1, rad2, rad3, rad4, n_vertical_divs, n_horizontal_divs, pattern_length, pattern_value, sphere_rad, sphere_distance_ratio)
