@@ -131,14 +131,14 @@ def fit_scene(surfaces, scale, trs):
     rs.RotateObjects(surfaces, (0,0,0), -25, rs.VectorCreate((0,0,0),(10,0,0)))
     rs.RotateObjects(surfaces, (0,0,0), 20.4)
     
-    rs.MoveObjects(surfaces, (-20.5,-2,0))
+    rs.MoveObjects(surfaces, (-18.5,-8,0))
 
 def find_scale(bound):
     max_width = 42.0
     b = rs.BoundingBox(bound)
     bb_width = b[1][0] - b[0][0]
     scale = max_width / bb_width
-    trs = (-b[0][0], -b[0][1]*0.7, 0)
+    trs = (-b[0][0], -b[0][1], 0)
     return (scale, trs)
     
 def run(text, width, distance, n_rects, n_corners):
