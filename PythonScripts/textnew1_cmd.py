@@ -132,10 +132,10 @@ def fit_scene(surfaces, scale, trs):
     rs.MoveObjects(surfaces, trs)
     rs.ScaleObjects(surfaces,(0,0,0), (scale,scale,scale))
     #rs.VectorCreate(
-    rs.RotateObjects(surfaces, (0,0,0), -80, rs.VectorCreate((0,0,0),(10,0,0)))
+    rs.RotateObjects(surfaces, (0,0,0), -100, rs.VectorCreate((0,0,0),(10,0,0)))
     rs.RotateObjects(surfaces, (0,0,0), 200.4)
     
-    rs.MoveObjects(surfaces, (10,0,0))
+    rs.MoveObjects(surfaces, (12,0,0))
 
 def find_scale(bounds):
     max_width = 30.0
