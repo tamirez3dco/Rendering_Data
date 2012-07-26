@@ -21,7 +21,11 @@ def create_text_curves(text):
     text_entity.Text = text
     curves = text_entity.Explode()
     return curves
-
+    
+def base_bounds2(box, n):
+     c1 = rs.AddCircle3Pt(box[0],box[1],box[2])
+     return c1
+     
 def base_bounds(box, n):
      center = rs.CurveAreaCentroid(box)
      #rs.AddCircle(
@@ -61,43 +65,43 @@ def create_text_surfaces(curves, letters):
     return res
 
 def extrude_bound(b_in, b_out, path, diff):
-    s0 = rs.ExtrudeCurve(b_in, path)
     s1 = rs.ExtrudeCurve(b_out, path)
-    rs.CapPlanarHoles(s0)
     rs.CapPlanarHoles(s1)
-    if diff:
-        bound = rs.BooleanDifference([s1],[s0])
-        return bound
-    else:
+    if diff == False:
         return s1
+    s0 = rs.ExtrudeCurve(b_in, path)
+    rs.CapPlanarHoles(s0)
+    bound = rs.BooleanDifference([s1],[s0])
+    return bound
+    
+def create_rect_bound(box, path):
+    points = box[0:4]
+    points.append(box[0])
+    
+    margin = 0.1
+    c0 = rs.AddPolyline(points)
+    cc0 = rs.OffsetCurve(c0, (10,10,10), margin)
+    cc1 = rs.OffsetCurve(cc0, (10,10,10), 0.1)
+    bound = extrude_bound(cc0, cc1, path, True)
+    diff_box =  extrude_bound(cc0, cc1, path, False)
+    return (cc0, cc1, bound, diff_box)
     
 def create_bounds(surfaces, width, distance, n_rects, n_corners):
     box = rs.BoundingBox(surfaces)
     box_width = box[1][0]-box[0][0]
     shape_size=box_width*0.85
-    all_d = shape_size/n_rects
-    n_rects = int(math.ceil((shape_size-0.1)/float((width+distance))))
-    print n_rects
-    #rs.AddLine(box[0],box[1])
-    path = rs.AddLine(box[0],box[4])
-    points = box[0:4]
-    points.append(box[0])
     
+    n_rects = int(math.ceil((shape_size-0.1)/float((width+distance))))
+    path = rs.AddLine(box[0],box[4])
     margin = 0.1
     distance = width + distance
     res=[]
     
-    c0 = rs.AddPolyline(points)
-    cc0 = rs.OffsetCurve(c0, (10,10,10), margin)
-    cc1 = rs.OffsetCurve(cc0, (10,10,10), 0.1)
-    bound = extrude_bound(cc0, cc1, path, True)
-    
+    (cc0, cc1, bound,diff_box) = create_rect_bound(box, path)
     res.append(bound)
-    diff_box =  extrude_bound(cc0, cc1, path, False)
+    base_bounds2(box,n_corners)
     
     c0 = base_bounds(cc0,n_corners)
-    
-    #c0 = rs.OffsetCurve(c0, (10,10,10), margin)
     c1 = rs.OffsetCurve(c0, (10,10,10), width)
     bound = extrude_bound(c0, c1, path, True)
     bound_diff = rs.BooleanDifference(bound, diff_box)
@@ -156,7 +160,7 @@ def normalize_inputs(width, distance, n_rects, n_corners):
     width = width*0.3 + 0.05
     distance = distance*0.3 + 0.03
     n_rects = int(math.floor((12 * n_rects) + 1))
-    n_corners = int(math.floor((5 * n_corners) + 3))  
+    n_corners = int(math.floor((6 * n_corners) + 3))  
     return (width, distance, n_rects, n_corners)
 
 def RunCommand( is_interactive ):
@@ -184,7 +188,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
