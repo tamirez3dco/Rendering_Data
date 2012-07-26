@@ -182,9 +182,9 @@ def RunCommand( is_interactive ):
     a4 = 0.5
     text = rs.GetString()
 
-    (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2,a3, a4)
+    (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    #rs.EnableRedraw(False)
+    rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
