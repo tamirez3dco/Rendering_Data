@@ -73,6 +73,12 @@ def extrude_bound(b_in, b_out, path, diff):
     
 def create_bounds(surfaces, width, distance, n_rects, n_corners):
     box = rs.BoundingBox(surfaces)
+    box_width = box[1][0]-box[0][0]
+    shape_size=box_width*1.1
+    all_d = shape_size/n_rects
+    n_rects = int(math.floor((shape_size-0.1)/float((width+distance))))
+    print n_rects
+    #rs.AddLine(box[0],box[1])
     path = rs.AddLine(box[0],box[4])
     points = box[0:4]
     points.append(box[0])
@@ -107,10 +113,13 @@ def create_bounds(surfaces, width, distance, n_rects, n_corners):
         c1 = rs.OffsetCurve(c0, (10,10,10), width)
         cc.append(c0)
         bound = extrude_bound(c0, c1, path, True)
-        bound = rs.BooleanDifference(bound, diff_box)
-        for k in bound:
-            res.append(k)
-        
+        #bound = rs.BooleanDifference(bound, diff_box)
+        bound_diff = rs.BooleanDifference(bound, diff_box)
+        if (bound_diff):
+            for k in bound_diff:
+                res.append(k)
+        else:
+            rs.DeleteObject(bound)
         
     rs.DeleteObject(diff_box)
     return res
@@ -144,8 +153,8 @@ def run(text, width, distance, n_rects, n_corners):
     return True
 
 def normalize_inputs(width, distance, n_rects, n_corners):
-    width = width*0.45 + 0.05
-    distance = distance*0.45 + 0.02
+    width = width*0.3 + 0.02
+    distance = distance*0.3 + 0.02
     n_rects = int(math.floor((12 * n_rects) + 1))
     n_corners = int(math.floor((5 * n_corners) + 3))  
     return (width, distance, n_rects, n_corners)
@@ -155,12 +164,12 @@ def RunCommand( is_interactive ):
     a1_o = Rhino.Input.Custom.OptionDouble(0.5)
     a2_o = Rhino.Input.Custom.OptionDouble(0.5)
     a3_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a4_o = Rhino.Input.Custom.OptionDouble(0.5)
+    #a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
     go.AddOptionDouble("a2", a2_o)
     go.AddOptionDouble("a3", a3_o)
-    go.AddOptionDouble("a4", a4_o)
+    #go.AddOptionDouble("a4", a4_o)
     go.AcceptNothing(True)
     while True:
         if go.Get()!=Rhino.Input.GetResult.Option:
@@ -169,13 +178,13 @@ def RunCommand( is_interactive ):
     a1 = a1_o.CurrentValue
     a2 = a2_o.CurrentValue
     a3 = a3_o.CurrentValue
-    a4 = a4_o.CurrentValue
-    
+    #a4 = a4_o.CurrentValue
+    a4 = 0.5
     text = rs.GetString()
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2,a3, a4)
    
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
