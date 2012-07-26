@@ -147,7 +147,7 @@ def normalize_inputs(width, distance, n_rects, n_corners):
     width = width*0.45 + 0.05
     distance = distance*0.45 + 0.02
     n_rects = int(math.floor((12 * n_rects) + 1))
-    n_corners = int(math.floor((12 * n_corners) + 3))  
+    n_corners = int(math.floor((5 * n_corners) + 3))  
     return (width, distance, n_rects, n_corners)
 
 def RunCommand( is_interactive ):
