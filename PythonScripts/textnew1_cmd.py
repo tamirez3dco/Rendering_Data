@@ -74,7 +74,7 @@ def extrude_bound(b_in, b_out, path, diff):
 def create_bounds(surfaces, width, distance, n_rects, n_corners):
     box = rs.BoundingBox(surfaces)
     box_width = box[1][0]-box[0][0]
-    shape_size=box_width*1.1
+    shape_size=box_width*0.85
     all_d = shape_size/n_rects
     n_rects = int(math.floor((shape_size-0.1)/float((width+distance))))
     print n_rects
@@ -138,7 +138,7 @@ def find_scale(bound):
     b = rs.BoundingBox(bound)
     bb_width = b[1][0] - b[0][0]
     scale = max_width / bb_width
-    trs = (-b[0][0], -b[0][1], 0)
+    trs = (-b[0][0], -b[0][1]*0.7, 0)
     return (scale, trs)
     
 def run(text, width, distance, n_rects, n_corners):
@@ -153,8 +153,8 @@ def run(text, width, distance, n_rects, n_corners):
     return True
 
 def normalize_inputs(width, distance, n_rects, n_corners):
-    width = width*0.3 + 0.02
-    distance = distance*0.3 + 0.02
+    width = width*0.3 + 0.05
+    distance = distance*0.3 + 0.03
     n_rects = int(math.floor((12 * n_rects) + 1))
     n_corners = int(math.floor((5 * n_corners) + 3))  
     return (width, distance, n_rects, n_corners)
