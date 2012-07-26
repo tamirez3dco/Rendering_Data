@@ -22,6 +22,16 @@ def create_text_curves(text):
     curves = text_entity.Explode()
     return curves
 
+def base_bounds(box, n):
+     center = rs.CurveAreaCentroid(box)
+     #rs.AddCircle(
+     c = rs.AddCircle(center[0], 0.1)
+     rs.RotateObject(c, center[0], 90)
+     d = rs.DivideCurve(c,n)
+     d.append(d[0])
+     bound = rs.AddPolyline(d)
+     return bound
+
 def create_text_surfaces(curves, letters):
     path = rs.AddLine((0,0,0),(0,0,0.1))
     c_index = 0
@@ -50,36 +60,59 @@ def create_text_surfaces(curves, letters):
             
     return res
 
-def create_bounds(surfaces, width, distance, n_rects):
-    box = rs.BoundingBox(surfaces)
+def extrude_bound(b_in, b_out, path, diff):
+    s0 = rs.ExtrudeCurve(b_in, path)
+    s1 = rs.ExtrudeCurve(b_out, path)
+    rs.CapPlanarHoles(s0)
+    rs.CapPlanarHoles(s1)
+    if diff:
+        bound = rs.BooleanDifference([s1],[s0])
+        return bound
+    else:
+        return s1
     
+def create_bounds(surfaces, width, distance, n_rects, n_corners):
+    box = rs.BoundingBox(surfaces)
     path = rs.AddLine(box[0],box[4])
     points = box[0:4]
     points.append(box[0])
-    #curves = []
-    margin_left = 0.1
-    margin_top = 0.02
-    #distance = 1
+    
+    margin = 0.1
     distance = width + distance
     res=[]
-    for j in range(n_rects):
-        curves = []
-        for k in range(2):
-            p1 = rs.PointAdd(points[0], ((-distance*j)+(-width*k)-margin_left,(-distance*j)+(-width*k)+margin_top,0))
-            p2 = rs.PointAdd(points[1], ((distance*j)+(width*k)+margin_left,(-distance*j)+(-width*k)+margin_top,0))
-            p3 = rs.PointAdd(points[2], ((distance*j)+(width*k)+margin_left,(distance*j)+(width*k)-margin_top,0))
-            p4 = rs.PointAdd(points[3], ((-distance*j)+(-width*k)-margin_left,(distance*j)+(width*k)-margin_top,0))
-            np = [p1,p2,p3,p4,p1]
-            curves.append(rs.AddPolyline(np))
-            #rs.ExtrudeCurve(c0, path)
-            #rs.ExtrudeCurve(c1, path)
-        s0 = rs.ExtrudeCurve(curves[0], path)
-        s1 = rs.ExtrudeCurve(curves[1], path)
-        rs.CapPlanarHoles(s0)
-        rs.CapPlanarHoles(s1)
-        bound = rs.BooleanDifference([s1],[s0])
-        #rs.BooleanDifference(
-        res.append(bound[0])
+    
+    c0 = rs.AddPolyline(points)
+    cc0 = rs.OffsetCurve(c0, (10,10,10), margin)
+    cc1 = rs.OffsetCurve(cc0, (10,10,10), 0.1)
+    bound = extrude_bound(cc0, cc1, path, True)
+    
+    res.append(bound)
+    diff_box =  extrude_bound(cc0, cc1, path, False)
+    
+    c0 = base_bounds(cc0,n_corners)
+    
+    #c0 = rs.OffsetCurve(c0, (10,10,10), margin)
+    c1 = rs.OffsetCurve(c0, (10,10,10), width)
+    bound = extrude_bound(c0, c1, path, True)
+    bound_diff = rs.BooleanDifference(bound, diff_box)
+    if (bound_diff):
+        res.append(bound_diff[0])
+    else:
+        rs.DeleteObject(bound)
+        
+    cc=[c0]
+    for j in range(1,n_rects):
+        diff_box =  extrude_bound(cc0, cc1, path, False)
+        c0 = rs.OffsetCurve(cc[j-1], (10,10,10), distance)
+        c1 = rs.OffsetCurve(c0, (10,10,10), width)
+        cc.append(c0)
+        bound = extrude_bound(c0, c1, path, True)
+        bound = rs.BooleanDifference(bound, diff_box)
+        for k in bound:
+            res.append(k)
+        
+        
+    rs.DeleteObject(diff_box)
     return res
 
 def fit_scene(surfaces, scale, trs):
@@ -99,33 +132,35 @@ def find_scale(bound):
     trs = (-b[0][0], -b[0][1], 0)
     return (scale, trs)
     
-def run(text, width, distance, n_rects):
+def run(text, width, distance, n_rects, n_corners):
     curve_nums = num_letter_curves(text)
     curves = create_text_curves(text)
     surfaces = create_text_surfaces(curves, curve_nums)
-    bounds = create_bounds(surfaces, width, distance, n_rects)
+    bounds = create_bounds(surfaces, width, distance, n_rects, n_corners)
     (scale, trs) = find_scale(bounds[len(bounds)-1])
     fit_scene(surfaces, scale, trs)
     fit_scene(bounds, scale, trs)
     find_scale(bounds[len(bounds)-1])
     return True
 
-def normalize_inputs(width, distance, n_rects):
+def normalize_inputs(width, distance, n_rects, n_corners):
     width = width*0.45 + 0.05
     distance = distance*0.45 + 0.02
     n_rects = int(math.floor((12 * n_rects) + 1))
-    return (width, distance, n_rects)
+    n_corners = int(math.floor((12 * n_corners) + 3))  
+    return (width, distance, n_rects, n_corners)
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
     a1_o = Rhino.Input.Custom.OptionDouble(0.5)
     a2_o = Rhino.Input.Custom.OptionDouble(0.5)
     a3_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
     go.AddOptionDouble("a2", a2_o)
     go.AddOptionDouble("a3", a3_o)
-    
+    go.AddOptionDouble("a4", a4_o)
     go.AcceptNothing(True)
     while True:
         if go.Get()!=Rhino.Input.GetResult.Option:
@@ -134,13 +169,14 @@ def RunCommand( is_interactive ):
     a1 = a1_o.CurrentValue
     a2 = a2_o.CurrentValue
     a3 = a3_o.CurrentValue
+    a4 = a4_o.CurrentValue
     
     text = rs.GetString()
 
-    (width, distance, n_rects) = normalize_inputs(a1,a2,a3)
-    
+    (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2,a3, a4)
+   
     rs.EnableRedraw(False)
-    run(text, width, distance, n_rects)
+    run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
 if( __name__=="__main__" ):
