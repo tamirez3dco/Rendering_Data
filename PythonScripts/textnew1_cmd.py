@@ -157,8 +157,8 @@ def run(text, width, distance, n_rects, n_corners):
     return True
 
 def normalize_inputs(width, distance, n_rects, n_corners):
-    width = width*0.3 + 0.05
-    distance = distance*0.3 + 0.03
+    width = width*0.3 + 0.1
+    distance = distance*0.3 + 0.07
     n_rects = int(math.floor((12 * n_rects) + 1))
     n_corners = int(math.floor((6 * n_corners) + 3))  
     return (width, distance, n_rects, n_corners)
