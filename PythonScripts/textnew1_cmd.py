@@ -26,11 +26,9 @@ def base_bounds2(box, n):
      c1 = rs.AddCircle3Pt(box[0],box[1],box[2])
      return c1
      
-def base_bounds(box, n):
-     center = rs.CurveAreaCentroid(box)
-     #rs.AddCircle(
-     c = rs.AddCircle(center[0], 0.1)
-     rs.RotateObject(c, center[0], 90)
+def base_bounds(box, n , center):
+     c = rs.AddCircle(center, 0.1)
+     rs.RotateObject(c, center, 90)
      d = rs.DivideCurve(c,n)
      d.append(d[0])
      bound = rs.AddPolyline(d)
@@ -85,7 +83,53 @@ def create_rect_bound(box, path):
     bound = extrude_bound(cc0, cc1, path, True)
     diff_box =  extrude_bound(cc0, cc1, path, False)
     return (cc0, cc1, bound, diff_box)
+
+def create_text_connectors(box, offset_rect, margin):
+    offset_box = rs.BoundingBox(offset_rect)
+    connector_rect = rs.AddRectangle(rs.WorldXYPlane(), (box[1][0]-box[0][0])+(2*margin), margin)
+    rs.MoveObject(connector_rect, (offset_box[0][0],offset_box[0][1],0))
+    path = rs.AddLine(box[0],(box[4][0],box[4][1],box[4][2]/2))
+    bottom_connector = rs.ExtrudeCurve(connector_rect, path)
+    rs.CapPlanarHoles(bottom_connector)
+    rs.MoveObject(bottom_connector, (0,0,box[4][2]/4))
+    top_connector = rs.CopyObject(bottom_connector)
+    rs.MoveObject(top_connector, (0, (margin+ (box[3][1]-box[0][1])), 0))
+    return (bottom_connector, top_connector)
     
+def create_line_connectors(outer_curve, center, diff_box, width, extrude_path, center_outer_rect):
+    v = rs.PolylineVertices(outer_curve)
+    maxd = 0
+    for p in v:
+        d = rs.Distance(p,center)
+        if d > maxd: 
+            maxd = d
+    eps = 0.001
+    vertex = []
+    for p in v:
+        d = rs.Distance(p,center)
+        if d+eps > maxd: 
+            vertex.append(p)
+            #rs.AddPoint(p)
+    
+    connectors = []
+    for v in vertex:
+        l1 = rs.AddLine(v, center)
+        l2 = rs.CopyObject(l1)
+        
+        frame = rs.CurveFrame(l1, 0)
+        rs.MoveObject(l1, frame.YAxis*(width/2))
+        rs.MoveObject(l2, -frame.YAxis*(width/2))
+      
+        ins1  = rs.CurveCurveIntersection(l1, center_outer_rect)
+        ins2  = rs.CurveCurveIntersection(l2, center_outer_rect)
+        
+        connector_rect = rs.AddPolyline([rs.CurveStartPoint(l1), ins1[0][1], ins2[0][1], rs.CurveStartPoint(l2), rs.CurveStartPoint(l1)])
+        connector = rs.ExtrudeCurve(connector_rect, extrude_path)
+        rs.CapPlanarHoles(connector)
+        connectors.append(connector)
+        
+    return connectors
+
 def create_bounds(surfaces, width, distance, n_rects, n_corners):
     box = rs.BoundingBox(surfaces)
     box_width = box[1][0]-box[0][0]
@@ -97,11 +141,15 @@ def create_bounds(surfaces, width, distance, n_rects, n_corners):
     distance = width + distance
     res=[]
     
-    (cc0, cc1, bound,diff_box) = create_rect_bound(box, path)
+    (cc0, center_outer_rect, bound, diff_box) = create_rect_bound(box, path)
     res.append(bound)
-    base_bounds2(box,n_corners)
     
-    c0 = base_bounds(cc0,n_corners)
+    center = rs.CurveAreaCentroid(cc0)[0]
+    
+    text_connectors = create_text_connectors(box, cc0, margin)
+    #base_bounds2(box,n_corners)
+    
+    c0 = base_bounds(cc0, n_corners, center)
     c1 = rs.OffsetCurve(c0, (10,10,10), width)
     bound = extrude_bound(c0, c1, path, True)
     bound_diff = rs.BooleanDifference(bound, diff_box)
@@ -109,13 +157,14 @@ def create_bounds(surfaces, width, distance, n_rects, n_corners):
         res.append(bound_diff[0])
     else:
         rs.DeleteObject(bound)
-        
-    cc=[c0]
+    
+    rs.DeleteObject(diff_box)
+    inner_curves=[c0]
     for j in range(1,n_rects):
-        diff_box =  extrude_bound(cc0, cc1, path, False)
-        c0 = rs.OffsetCurve(cc[j-1], (10,10,10), distance)
+        diff_box =  extrude_bound(cc0, center_outer_rect, path, False)
+        c0 = rs.OffsetCurve(inner_curves[j-1], (10,10,10), distance)
         c1 = rs.OffsetCurve(c0, (10,10,10), width)
-        cc.append(c0)
+        inner_curves.append(c0)
         bound = extrude_bound(c0, c1, path, True)
         #bound = rs.BooleanDifference(bound, diff_box)
         bound_diff = rs.BooleanDifference(bound, diff_box)
@@ -124,7 +173,13 @@ def create_bounds(surfaces, width, distance, n_rects, n_corners):
                 res.append(k)
         else:
             rs.DeleteObject(bound)
+        rs.DeleteObject(diff_box)
         
+    connectors = create_line_connectors(inner_curves[n_rects-1], center, diff_box, margin, path, center_outer_rect)
+    for c in connectors:
+        res.append(c)
+    res.append(text_connectors[0])
+    res.append(text_connectors[1])
     rs.DeleteObject(diff_box)
     return res
 
@@ -188,7 +243,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    #rs.EnableRedraw(False)
+    rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
