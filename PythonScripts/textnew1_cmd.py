@@ -335,9 +335,9 @@ def normalize_inputs(width, distance, n_rects, n_corners):
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.2)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.99)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.21)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.01)
     #a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
