@@ -5,6 +5,25 @@ import Rhino
 import itertools
 __commandname__ = "textnew1"
 
+
+def Sweep1(rail, cross_sections):
+    #rail = rs.GetObject("Select rail curve", rs.filter.curve)
+    rail_crv = rs.coercecurve(rail)
+    if not rail_crv: return
+ 
+    #cross_sections = rs.GetObjects("Select cross section curves", rs.filter.curve)
+    if not cross_sections: return
+    cross_sections = [rs.coercecurve(crv) for crv in cross_sections]
+ 
+    sweep = Rhino.Geometry.SweepOneRail()
+    sweep.AngleToleranceRadians = scriptcontext.doc.ModelAngleToleranceRadians
+    sweep.ClosedSweep = False
+    sweep.SweepTolerance = scriptcontext.doc.ModelAbsoluteTolerance
+    sweep.SetToRoadlikeTop()
+    breps = sweep.PerformSweep(rail_crv, cross_sections)
+    for brep in breps: scriptcontext.doc.Objects.AddBrep(brep)
+    scriptcontext.doc.Views.Redraw()
+    
 def num_letter_curves(text):
     t = list(text)
     res = []
@@ -70,7 +89,31 @@ def extrude_bound(b_in, b_out, path, diff):
     s0 = rs.ExtrudeCurve(b_in, path)
     rs.CapPlanarHoles(s0)
     bound = rs.BooleanDifference([s1],[s0])
+    
     return bound
+
+def extrude_bound2(inner_poly, outer_poly, path):
+    bb = rs.BoundingBox(outer_poly)
+    bbrect = rs.AddPolyline([bb[0],bb[1],bb[2],bb[3],bb[0]])
+    
+    center = rs.CurveAreaCentroid(bbrect)[0]
+    diff_rect_bottm = rs.AddPolyline([bb[0], bb[1], (bb[1].X, center[1], bb[1].Z), (bb[3].X, center[1] ,bb[3].Z), bb[0]])
+    diff_rect_top = rs.AddPolyline([bb[3], bb[2], (bb[2].X, center[1], bb[2].Z), (bb[3].X, center[1] ,bb[3].Z), bb[3]])
+    rs.ScaleObjects([diff_rect_bottm,diff_rect_top] , center, (1.1,1.1,1.1))
+    #diff_rect_top = diff_rect_bottm
+    
+    outer_top = rs.CurveBooleanDifference(outer_poly, diff_rect_bottm)
+    inner_top = rs.CurveBooleanDifference(inner_poly, diff_rect_bottm)
+    final_top = rs.CurveBooleanDifference(outer_top, inner_top)
+    outer_bottom = rs.CurveBooleanDifference(outer_poly, diff_rect_top)
+    inner_bottom = rs.CurveBooleanDifference(inner_poly, diff_rect_top)
+    final_bottom = rs.CurveBooleanDifference(outer_bottom, inner_bottom)
+    #rs.MoveObjects([final_top, final_bottom], (0,10,0))
+    bound_top = rs.ExtrudeCurve(final_top, path)
+    bound_bottom = rs.ExtrudeCurve(final_bottom, path)
+    rs.CapPlanarHoles(bound_top)
+    rs.CapPlanarHoles(bound_bottom)
+    return [bound_top, bound_bottom]
     
 def create_rect_bound(box, path):
     points = box[0:4]
@@ -130,6 +173,63 @@ def create_line_connectors(outer_curve, center, diff_box, width, extrude_path, c
         
     return connectors
 
+def union_poly_rect(rect, inner_poly, outer_poly, path):
+    copies = rs.CopyObjects([rect, inner_poly, outer_poly])
+    #rs.MoveObjects(copies, (15,0,-1))
+    
+    ins = rs.CurveCurveIntersection(rect, inner_poly)
+    area_diff = rs.CurveArea(inner_poly)[0] - rs.CurveArea(rect)[0]
+    
+    inner_diff = rs.CurveBooleanDifference(inner_poly, rect)
+    #rs.MoveObjects(inner_diff, (15,0,0))
+    outer_diff = rs.CurveBooleanDifference(outer_poly, rect)
+    #rs.MoveObjects(outer_diff, (15,0,0))
+    
+    u1 = rs.CurveBooleanUnion([inner_poly, rect])
+    #rs.MoveObjects(u1, (15,0,0))
+    u2 = rs.CurveBooleanDifference(outer_poly, u1)
+    #rs.MoveObjects(u2, (15,0,2))
+    
+    res=[]
+    if len(u2) == 1:
+        bound = rs.ExtrudeCurve(u2[0], path)
+        rs.CapPlanarHoles(bound)
+        return [bound]
+        
+    if len(u2) > 1:
+        if rs.PointInPlanarClosedCurve(rs.CurveAreaCentroid(u2[1])[0], u2[0]):
+            return extrude_bound2(u2[1], u2[0], path)
+        else:
+            for curve in u2:
+                bound = rs.ExtrudeCurve(curve, path)
+                rs.CapPlanarHoles(bound)
+                res.append(bound)
+    
+    return res
+    
+    if (area_diff>0) and (len(ins)==0):
+        return extrude_bound2(inner_poly, outer_poly, path)
+     
+        
+    res=[]
+    for outer_curve in outer_diff:
+        for inner_curve in inner_diff:
+            ins = rs.CurveCurveIntersection(outer_curve, inner_curve)
+            if len(ins)>0:
+                final = rs.CurveBooleanDifference(outer_curve, inner_curve)
+                #rs.MoveObject(final,(0,0,1))
+                bound = rs.ExtrudeCurve(final, path)
+                rs.CapPlanarHoles(bound)
+                res.append(bound)
+                
+    #outer_inner_diff = rs.CurveBooleanDifference(outer_diff, inner_diff)
+    #rs.MoveObjects(outer_inner_diff, (10,0,-0.5))
+    rs.DeleteObjects(inner_diff)
+    rs.DeleteObjects(outer_diff)
+    rs.DeleteObjects(copies)
+    return res
+    
+
 def create_bounds(surfaces, width, distance, n_rects, n_corners):
     box = rs.BoundingBox(surfaces)
     box_width = box[1][0]-box[0][0]
@@ -165,14 +265,17 @@ def create_bounds(surfaces, width, distance, n_rects, n_corners):
         c0 = rs.OffsetCurve(inner_curves[j-1], (10,10,10), distance)
         c1 = rs.OffsetCurve(c0, (10,10,10), width)
         inner_curves.append(c0)
-        bound = extrude_bound(c0, c1, path, True)
+        #bound = extrude_bound(c0, c1, path, True)
+        newbounds = union_poly_rect(center_outer_rect, c0, c1, path)
+        
         #bound = rs.BooleanDifference(bound, diff_box)
-        bound_diff = rs.BooleanDifference(bound, diff_box)
-        if (bound_diff):
-            for k in bound_diff:
+        #bound_diff = rs.BooleanDifference(bound, diff_box)
+        if (newbounds):
+            for k in newbounds:
                 res.append(k)
         else:
-            rs.DeleteObject(bound)
+            pass
+            #rs.DeleteObject(bound)
         rs.DeleteObject(diff_box)
         
     connectors = create_line_connectors(inner_curves[n_rects-1], center, diff_box, margin, path, center_outer_rect)
@@ -220,9 +323,9 @@ def normalize_inputs(width, distance, n_rects, n_corners):
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.1)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.1)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.1)
     #a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
