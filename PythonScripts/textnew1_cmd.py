@@ -160,9 +160,21 @@ def create_line_connectors(outer_curve, center, diff_box, width, extrude_path, c
         l2 = rs.CopyObject(l1)
         
         frame = rs.CurveFrame(l1, 0)
-        rs.MoveObject(l1, frame.YAxis*(width/2))
-        rs.MoveObject(l2, -frame.YAxis*(width/2))
-      
+        n = rs.CurveNormal(l1)
+        axis = frame.YAxis
+        vec = rs.VectorScale(rs.VectorUnitize(rs.VectorCreate(center, v)), width/2)
+        vec1 = rs.VectorRotate(vec,90,rs.VectorCreate(center,rs.PointAdd(center,(0,0,1))))
+        vec2 = rs.VectorRotate(vec,-90,rs.VectorCreate(center,rs.PointAdd(center,(0,0,1))))
+        rs.MoveObject(l1, vec1)
+        rs.MoveObject(l2, vec2)
+        
+        #if axis[2] != 0:
+        #    axis=(1,0,0)
+            
+        #rs.CurveFrame(
+        #rs.MoveObject(l1, axis*(width/2))
+        #rs.MoveObject(l2, -axis*(width/2))
+        
         ins1  = rs.CurveCurveIntersection(l1, center_outer_rect)
         ins2  = rs.CurveCurveIntersection(l2, center_outer_rect)
         
@@ -323,9 +335,9 @@ def normalize_inputs(width, distance, n_rects, n_corners):
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.1)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.1)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.1)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.2)
     #a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
@@ -346,7 +358,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
