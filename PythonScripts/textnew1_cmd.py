@@ -199,8 +199,11 @@ def union_poly_rect(rect, inner_poly, outer_poly, path):
     
     u1 = rs.CurveBooleanUnion([inner_poly, rect])
     uu = rs.CopyObjects(u1, (15,0,0))
-    if len(u1)!=1:
+    if len(u1)==0:
         return []
+    if len(u1)>1:
+        u1 = [u1[0]]
+        
     #rs.MoveObjects(u1, (15,0,0))
     u2 = rs.CurveBooleanDifference(outer_poly, u1)
     #rs.MoveObjects(u2, (15,0,2))
