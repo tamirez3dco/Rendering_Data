@@ -177,7 +177,7 @@ def create_line_connectors(outer_curve, center, diff_box, width, extrude_path, c
         
         ins1  = rs.CurveCurveIntersection(l1, center_outer_rect)
         ins2  = rs.CurveCurveIntersection(l2, center_outer_rect)
-        if (len(ins1) == 0) or (len(ins2) == 0):
+        if ((ins1 == None) or (ins2 == None) or (len(ins1) == 0) or (len(ins2) == 0)):
             continue
         connector_rect = rs.AddPolyline([rs.CurveStartPoint(l1), ins1[0][1], ins2[0][1], rs.CurveStartPoint(l2), rs.CurveStartPoint(l1)])
         connector = rs.ExtrudeCurve(connector_rect, extrude_path)
