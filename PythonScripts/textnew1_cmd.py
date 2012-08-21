@@ -198,6 +198,9 @@ def union_poly_rect(rect, inner_poly, outer_poly, path):
     #rs.MoveObjects(outer_diff, (15,0,0))
     
     u1 = rs.CurveBooleanUnion([inner_poly, rect])
+    uu = rs.CopyObjects(u1, (15,0,0))
+    if len(u1)!=1:
+        return []
     #rs.MoveObjects(u1, (15,0,0))
     u2 = rs.CurveBooleanDifference(outer_poly, u1)
     #rs.MoveObjects(u2, (15,0,2))
@@ -221,7 +224,6 @@ def union_poly_rect(rect, inner_poly, outer_poly, path):
     
     if (area_diff>0) and (len(ins)==0):
         return extrude_bound2(inner_poly, outer_poly, path)
-     
         
     res=[]
     for outer_curve in outer_diff:
@@ -335,9 +337,9 @@ def normalize_inputs(width, distance, n_rects, n_corners):
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.99)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.21)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.01)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.6)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.6)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.6)
     #a4_o = Rhino.Input.Custom.OptionDouble(0.5)
     
     go.AddOptionDouble("a1", a1_o)
@@ -358,7 +360,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    #rs.EnableRedraw(False)
+    rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
