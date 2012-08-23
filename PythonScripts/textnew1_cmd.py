@@ -28,6 +28,10 @@ def num_letter_curves(text):
     t = list(text)
     res = []
     for l in t:
+        if l == " ": 
+            res.append(0)
+            continue
+            
         g = Rhino.Geometry.TextEntity()
         g.Text = l
         c = g.Explode()
@@ -59,6 +63,8 @@ def create_text_surfaces(curves, letters):
     res = []
     
     for letter in letters:
+        if letter==0:
+            continue
         letter_curves = curves[c_index:c_index+letter]
         letter_surfaces = []
         for crv in letter_curves:
