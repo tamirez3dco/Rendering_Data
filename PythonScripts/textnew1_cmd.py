@@ -75,15 +75,19 @@ def create_text_surfaces(curves, letters):
             letter_surfaces.append(s)
         c_index += letter
         
-        s = letter_surfaces[0]
+        #s = letter_surfaces[0]
         if(len(letter_surfaces)>1):
             srf = rs.AddPlanarSrf([letter_curves[0]])
             ins = rs.CurveSurfaceIntersection(letter_curves[1], srf)
             rs.DeleteObject(srf)
-            if len(ins) != 0:
+            if len(ins) == 0:
+                res.append(letter_surfaces[0])
+                res.append(letter_surfaces[1])
+            else:
                 s = rs.BooleanDifference([letter_surfaces[0]],letter_surfaces[1:len(letter_surfaces)])
-             
-        res.append(s)
+                res.append(s)
+        else:
+            res.append(letter_surfaces[0])
             
     return res
 
@@ -370,7 +374,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     run(text, width, distance, n_rects, n_corners)
     rs.EnableRedraw(True)
     
