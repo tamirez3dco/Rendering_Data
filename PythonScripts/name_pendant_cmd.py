@@ -222,7 +222,7 @@ def run(text, section_width, distance, polygon_sides):
     radius_in = 5
     radius_out = 16.5
     section_height = 0.5
-    text_width = 16
+    text_width = 15.6
     text_height = 3
     center_width = text_width + 1
     center_height = text_height + 1 
