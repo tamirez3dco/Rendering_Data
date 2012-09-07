@@ -176,10 +176,12 @@ def create_text_bounding_rect(width, height):
 
 def create_trim_planes(width, height):
     planes = []
-    planes.append(rs.PlaneFromPoints((0,-height/2,0), (width/2,-height/2,0), (0, -height/2, -1)))
-    planes.append(rs.PlaneFromPoints((width/2,0,0), (width/2,height/2,0), (width/2, 0, -1)))
-    planes.append(rs.PlaneFromPoints((-width/2,0,0), (-width/2,height/2,0), (-width/2, 0, 1)))
-    planes.append(rs.PlaneFromPoints((0,height/2,0), (width/2,height/2,0), (0, height/2, 1)))
+    h2 = float(height)/2.0
+    w2 = float(width)/2.0
+    planes.append(rs.PlaneFromPoints((0,-h2,0), (w2,-h2,0), (0, -h2, -1)))
+    planes.append(rs.PlaneFromPoints((w2,0,0), (w2,h2,0), (w2, 0, -1)))
+    planes.append(rs.PlaneFromPoints((-w2,0,0), (-w2,h2,0), (-w2, 0, 1)))
+    planes.append(rs.PlaneFromPoints((0,h2,0), (w2,h2,0), (0, h2, 1)))
     return planes
 
 def trim_polygon(polygon_brep, width, height):
@@ -230,7 +232,7 @@ def run(text, section_width, distance, polygon_sides):
     #create_text_bounding_rect(center_width, center_height)
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
-    fit_scene(polygons)
+    #fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
     width = width*3 + 0.5
