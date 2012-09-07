@@ -157,11 +157,16 @@ def create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_
     rad_diff = section_width+distance
     num_polygons = int(math.ceil((radius_out-radius_in)/rad_diff))
     polygons=[]
-    for i in range(num_polygons):
-        poly = polygon(ORIGIN, polygon_sides, radius_in+(i*rad_diff))
+    #for i in range(num_polygons):
+    rad = radius_out    
+    while(True):
+        if (rad-section_width)<0.1:
+            break
+        poly = polygon(ORIGIN, polygon_sides, rad-section_width)
         polygon_brep = sweep_polygon(poly, polygon_sides, section_width, section_height)
         polygons.append(polygon_brep)
         rs.DeleteObject(poly)
+        rad = rad-(rad_diff)
     return polygons
 
 def create_text_bounding_rect(width, height):
@@ -225,11 +230,11 @@ def run(text, section_width, distance, polygon_sides):
     #create_text_bounding_rect(center_width, center_height)
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
-    fit_scene(polygons)
+    #fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
-    width = width*3 + 1
-    distance = distance*3 + 1
+    width = width*3 + 0.5
+    distance = distance*3 + 0.3
     n_corners = int(math.floor((6 * n_corners) + 3))  
     return (width, distance, n_corners)
 
@@ -251,8 +256,7 @@ def RunCommand( is_interactive ):
     a1 = a1_o.CurrentValue
     a2 = a2_o.CurrentValue
     a3 = a3_o.CurrentValue
-    #a4 = a4_o.CurrentValue
-    a4 = 0.5
+    
     text = rs.GetString()
 
     (width, distance, n_corners) = normalize_inputs(a1,a2, a3)
