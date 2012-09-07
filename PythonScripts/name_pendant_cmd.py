@@ -230,7 +230,7 @@ def run(text, section_width, distance, polygon_sides):
     #create_text_bounding_rect(center_width, center_height)
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
-    #fit_scene(polygons)
+    fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
     width = width*3 + 0.5
@@ -261,7 +261,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_corners) = normalize_inputs(a1,a2, a3)
    
-    #rs.EnableRedraw(False)
+    rs.EnableRedraw(False)
     run(text, width, distance, n_corners)
     rs.EnableRedraw(True)
     
