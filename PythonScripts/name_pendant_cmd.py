@@ -149,6 +149,7 @@ def polygon(center, n, radius):
 
 def project_section(plane, section):
     rs.AddPlaneSurface(plane, 20, 20)
+    
     #rs.ProjectCurveToSurface(
 
 def polygon_cross_sections(poly, n, width, height):
@@ -200,24 +201,37 @@ def create_text_bounding_rect(width, height):
 
 def create_trim_planes(width, height):
     planes = []
+    mplanes = []
     h2 = float(height)/2.0
     w2 = float(width)/2.0
+    d = 0.05
     planes.append(rs.PlaneFromPoints((0,-h2,0), (w2,-h2,0), (0, -h2, -1)))
+    mplanes.append(rs.PlaneFromPoints((0,-h2+d,0), (w2,-h2+d,0), (0, -h2+d, -1)))
+    
     planes.append(rs.PlaneFromPoints((w2,0,0), (w2,h2,0), (w2, 0, -1)))
+    mplanes.append(rs.PlaneFromPoints((w2-d,0,0), (w2-d,h2,0), (w2-d, 0, -1)))
+    
     planes.append(rs.PlaneFromPoints((-w2,0,0), (-w2,h2,0), (-w2, 0, 1)))
+    mplanes.append(rs.PlaneFromPoints((-w2+d,0,0), (-w2+d,h2,0), (-w2+d, 0, 1)))
+    
     planes.append(rs.PlaneFromPoints((0,h2,0), (w2,h2,0), (0, h2, 1)))
-    return planes
+    mplanes.append(rs.PlaneFromPoints((0,h2-d,0), (w2,h2-d,0), (0, h2-d, 1)))
+    
+    return (planes, mplanes)
 
 def trim_polygon(polygon_brep, width, height):
-    planes = create_trim_planes(width, height)
+    (planes,mplanes) = create_trim_planes(width, height)
     res = []
-    for plane in planes:
+    for i in range(len(planes)):
         poly_copy = rs.CopyObject(polygon_brep)
-        retained = rs.TrimBrep(poly_copy, plane)
+        retained = rs.TrimBrep(poly_copy, planes[i])
         if(len(retained)==0):
-            rs.DeleteObject(poly_copy)
-        else:
-            res.append(retained[0])
+            retained = rs.TrimBrep(poly_copy, mplanes[i])
+            if(len(retained)==0):
+                rs.DeleteObject(poly_copy)
+                continue
+
+        res.append(retained[0])
     rs.DeleteObject(polygon_brep)
     return res
     
@@ -271,9 +285,9 @@ def normalize_inputs(width, distance, n_corners):
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
-    a1_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.79)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.21)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.2)
    
     go.AddOptionDouble("a1", a1_o)
     go.AddOptionDouble("a2", a2_o)
