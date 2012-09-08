@@ -291,10 +291,11 @@ def run(text, section_width, distance, polygon_sides):
     center_height = text_height + (4*center_panel_width)
     text = text.upper()
     #create_text_bounding_rect(text_width, text_height)
-    create_center_rect(text_width, text_height, section_height, center_panel_width, center_panel_width)
+    center_rect = create_center_rect(text_width, text_height, section_height, center_panel_width, center_panel_width)
     #try_fillet()
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
+    polygons.append(center_rect)
     fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
