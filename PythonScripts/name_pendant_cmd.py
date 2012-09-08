@@ -11,7 +11,7 @@ X0 = (1,0,0)
 Y0 = (0,1,0)
 Z0 = (0,0,1)
 
-
+##Text utils, should move to a module
 def num_letter_curves(text):
     t = list(text)
     res = []
@@ -72,7 +72,20 @@ def add_text(text):
     curves = create_text_curves(text)
     surfaces = create_text_surfaces(curves, curve_nums)
     return surfaces
+
+###BAD OLD
+def extrude_bound(b_in, b_out, path, diff):
+    s1 = rs.ExtrudeCurve(b_out, path)
+    rs.CapPlanarHoles(s1)
+    if diff == False:
+        return s1
+    s0 = rs.ExtrudeCurve(b_in, path)
+    rs.CapPlanarHoles(s0)
+    bound = rs.BooleanDifference([s1],[s0])
     
+    return bound
+###
+
 def sweep1(rail, cross_sections):
     rail_crv = rs.coercecurve(rail)
     if not rail_crv: return
@@ -243,6 +256,17 @@ def trim_all_polygons(polygons, width, height):
             res.append(t)
     return res
 
+def create_center_rect(width, height, depth, external_panel_width, internal_panel_width):
+    internal_rect = rs.AddRectangle(rs.WorldXYPlane(), width, height)
+    rs.MoveObject(internal_rect, (-width/2, -height/2, 0))
+   
+    external_rect_in = rs.OffsetCurve(internal_rect, (10,10,10), internal_panel_width)
+    external_rect_out = rs.OffsetCurve(external_rect_in, (10,10,10), external_panel_width)
+    path = rs.AddLine(ORIGIN, (0,0,depth))
+    center_rect = extrude_bound(external_rect_in, external_rect_out, path, True)
+    
+    return center_rect
+
 def create_text_surfaces():
     text_surfaces = add_text(text)
     rs.ScaleObjects(text_surfaces, ORIGIN, (2.2,2.2,15))
@@ -255,27 +279,23 @@ def fit_scene(polygons):
     rs.RotateObjects(polygons, (0,0,0), -100, rs.VectorCreate((0,0,0),(10,0,0)))
     rs.RotateObjects(polygons, (0,0,0), 200.4)
     
-
-def try_fillet():
-    l1 = rs.AddLine(X0, rs.PointScale(X0,10))
-    l2 = rs.AddLine(Y0, rs.PointScale(Y0,10))
-    rs.AddFilletCurve(l1,l2,1,X0,Y0)
-    
 def run(text, section_width, distance, polygon_sides):
     #polygon_sides = 3
     radius_in = 5
     radius_out = 16.5
     section_height = 0.5
+    center_panel_width = 0.5
     text_width = 15.6
     text_height = 3
-    center_width = text_width + 1
-    center_height = text_height + 1 
+    center_width = text_width + (4*center_panel_width)
+    center_height = text_height + (4*center_panel_width)
     text = text.upper()
-    #create_text_bounding_rect(center_width, center_height)
+    #create_text_bounding_rect(text_width, text_height)
+    create_center_rect(text_width, text_height, section_height, center_panel_width, center_panel_width)
     #try_fillet()
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
-    fit_scene(polygons)
+    #fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
     width = width*3 + 0.5
@@ -306,7 +326,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_corners) = normalize_inputs(a1,a2, a3)
    
-    rs.EnableRedraw(False)
+    #rs.EnableRedraw(False)
     run(text, width, distance, n_corners)
     rs.EnableRedraw(True)
     
