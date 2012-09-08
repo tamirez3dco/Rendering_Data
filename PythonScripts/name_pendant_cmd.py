@@ -103,11 +103,35 @@ def PlanePointAt(plane_guid, point):
     point = plane_obj.PointAt(point[0], point[1], point[2])
     return point
 
-def create_section_shape(plane, width, height):
-    points = [ORIGIN, (-width,0,0), (-width, height, 0), (0,height,0), ORIGIN]
-    mapped_points = map(lambda x: PlanePointAt(plane, x), points)
-    shape = rs.AddPolyline(mapped_points)
+def create_section_shape1(plane, width, height):
+    radius = 0.2
+    points = [(-radius,0,0), (-(width-radius),0,0), (-(width),radius,0), (-width, height, 0), (0,height,0), (0,radius,0)]
+    mp = map(lambda x: PlanePointAt(plane, x), points)
+    
+    l1 = rs.AddLine(mp[0],mp[1])
+    shape = rs.AddPolyline(mp[2:6])
+    fillet1 = rs.AddFilletCurve(l1, shape, radius, mp[1], mp[2])
+    fillet2 = rs.AddFilletCurve(l1, shape, radius, mp[0], mp[5])
+    shape = rs.JoinCurves([shape, fillet1, fillet2], delete_input=True) 
+    #rs.JoinCurves(
     #shape = rs.AddRectangle(plane, width, height)
+    return shape
+
+def create_section_shape(plane, width, height):
+    radius = 0.2
+    shape_points = [(0,height-radius,0), ORIGIN, (-width,0,0),(-width,height-radius,0)]
+    line_points = [(-(width-radius),height,0),(-radius, height, 0)]
+    
+    shape_points = map(lambda x: PlanePointAt(plane, x), shape_points)
+    line_points = map(lambda x: PlanePointAt(plane, x), line_points)
+    
+    shape = rs.AddPolyline(shape_points)
+    line = rs.AddPolyline(line_points)
+    
+    fillet1 = rs.AddFilletCurve(line, shape, radius, line_points[0], shape_points[3])
+    fillet2 = rs.AddFilletCurve(line, shape, radius, line_points[1], shape_points[0])
+    
+    shape = rs.JoinCurves([shape, line, fillet1, fillet2], delete_input=True) 
     return shape
     
 def polygon_corners(center, n, radius):
@@ -217,6 +241,12 @@ def fit_scene(polygons):
     rs.RotateObjects(polygons, (0,0,0), -100, rs.VectorCreate((0,0,0),(10,0,0)))
     rs.RotateObjects(polygons, (0,0,0), 200.4)
     
+
+def try_fillet():
+    l1 = rs.AddLine(X0, rs.PointScale(X0,10))
+    l2 = rs.AddLine(Y0, rs.PointScale(Y0,10))
+    rs.AddFilletCurve(l1,l2,1,X0,Y0)
+    
 def run(text, section_width, distance, polygon_sides):
     #polygon_sides = 3
     radius_in = 5
@@ -228,6 +258,7 @@ def run(text, section_width, distance, polygon_sides):
     center_height = text_height + 1 
     text = text.upper()
     #create_text_bounding_rect(center_width, center_height)
+    #try_fillet()
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
     fit_scene(polygons)
