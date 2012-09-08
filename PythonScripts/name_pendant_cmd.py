@@ -258,7 +258,7 @@ def trim_all_polygons(polygons, width, height):
 
 def create_center_rect(width, height, depth, external_panel_width, internal_panel_width):
     internal_rect = rs.AddRectangle(rs.WorldXYPlane(), width, height)
-    rs.MoveObject(internal_rect, (-width/2, -height/2, 0))
+    rs.MoveObject(internal_rect, (-float(width)/2.0, -float(height)/2.0, 0))
    
     external_rect_in = rs.OffsetCurve(internal_rect, (10,10,10), internal_panel_width)
     external_rect_out = rs.OffsetCurve(external_rect_in, (10,10,10), external_panel_width)
