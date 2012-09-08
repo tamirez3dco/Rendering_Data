@@ -33,8 +33,8 @@ def create_text_curves(text):
     curves = text_entity.Explode()
     return curves
 
-def create_text_surfaces(curves, letters):
-    path = rs.AddLine((0,0,0),(0,0,0.1))
+def create_text_surfaces(curves, letters, depth):
+    path = rs.AddLine((0,0,0),(0,0,depth))
     c_index = 0
     res = []
     
@@ -67,10 +67,10 @@ def create_text_surfaces(curves, letters):
             
     return res
 
-def add_text(text):
+def add_text(text, depth):
     curve_nums = num_letter_curves(text)
     curves = create_text_curves(text)
-    surfaces = create_text_surfaces(curves, curve_nums)
+    surfaces = create_text_surfaces(curves, curve_nums, depth)
     return surfaces
 
 ###BAD OLD
@@ -267,10 +267,15 @@ def create_center_rect(width, height, depth, external_panel_width, internal_pane
     
     return center_rect
 
-def create_text_surfaces():
-    text_surfaces = add_text(text)
-    rs.ScaleObjects(text_surfaces, ORIGIN, (2.2,2.2,15))
-    rs.MoveObjects(text_surfaces, (-5,-1,0))
+def create_text(text, wanted_height , depth):
+    text_surfaces = add_text(text, depth)
+    bb = rs.BoundingBox(text_surfaces)
+    height = abs(bb[0][1]-bb[2][1])
+    width = abs(bb[0][0]-bb[2][0])
+    rs.MoveObjects(text_surfaces, (-float(width)/2,-float(height)/2,0))
+    scale = wanted_height / float(height)
+    rs.ScaleObjects(text_surfaces, ORIGIN, (scale, scale, 1))
+    return text_surfaces
     
 def fit_scene(polygons):
     b = rs.BoundingBox(polygons)
@@ -280,22 +285,28 @@ def fit_scene(polygons):
     rs.RotateObjects(polygons, (0,0,0), 200.4)
     
 def run(text, section_width, distance, polygon_sides):
-    #polygon_sides = 3
     radius_in = 5
     radius_out = 16.5
     section_height = 0.5
     center_panel_width = 0.5
     text_width = 15.6
-    text_height = 3
+    text_height = 2
     center_width = text_width + (4*center_panel_width)
     center_height = text_height + (4*center_panel_width)
     text = text.upper()
-    #create_text_bounding_rect(text_width, text_height)
+   
     center_rect = create_center_rect(text_width, text_height, section_height, center_panel_width, center_panel_width)
-    #try_fillet()
+    
+    text_width = text_width + (2*center_panel_width)
+    text_height = text_height + (2*center_panel_width)
+    text_surfuces = create_text(text, text_height, section_height)
+    
+    
     polygons = create_all_polygons(polygon_sides, radius_in, radius_out, distance, section_width, section_height)
     polygons = trim_all_polygons(polygons, center_width, center_height )
     polygons.append(center_rect)
+    for s in text_surfuces:
+        polygons.append(s)    
     fit_scene(polygons)
     
 def normalize_inputs(width, distance, n_corners):
@@ -327,7 +338,7 @@ def RunCommand( is_interactive ):
 
     (width, distance, n_corners) = normalize_inputs(a1,a2, a3)
    
-    #rs.EnableRedraw(False)
+    rs.EnableRedraw(False)
     run(text, width, distance, n_corners)
     rs.EnableRedraw(True)
     
