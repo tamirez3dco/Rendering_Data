@@ -371,7 +371,7 @@ def RunCommand( is_interactive ):
     #a4 = a4_o.CurrentValue
     a4 = 0.5
     text = rs.GetString()
-
+    text = text.upper()
     (width, distance, n_rects, n_corners) = normalize_inputs(a1,a2, a4, a3)
    
     #rs.EnableRedraw(False)
