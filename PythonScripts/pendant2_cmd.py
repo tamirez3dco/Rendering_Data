@@ -54,7 +54,7 @@ def project_shape(frame, radius, wave):
     #height = random.uniform(0.1,0.5)
     pipe_path = rs.AddLine(frame.Origin, (frame.Origin[0], frame.Origin[1], height))
     #rs.AddPipe(
-    return rs.AddPipe(pipe_path, rs.CurveDomain(pipe_path),  [radius,radius], cap=2)
+    #return rs.AddPipe(pipe_path, rs.CurveDomain(pipe_path),  [radius,radius], cap=2)
     return rs.AddCylinder(frame.Origin, height, radius) 
     return rs.AddSphere(frame,radius)
     #rs.AddLoftSrf(
