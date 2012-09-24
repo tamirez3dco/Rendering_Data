@@ -86,7 +86,7 @@ def run(radius, n_curves, rotations, wave, seed):
     #fit_scene(shapes2)
     
 def fit_scene(polygons):
-    rs.ScaleObjects(polygons, ORIGIN, (2,2,2))
+    rs.ScaleObjects(polygons, ORIGIN, (1.6,1.6,1.6))
     b = rs.BoundingBox(polygons)
     trs = (0, -b[0][1], 0)
     rs.MoveObjects(polygons, trs)
