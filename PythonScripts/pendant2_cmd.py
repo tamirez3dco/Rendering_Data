@@ -94,10 +94,10 @@ def fit_scene(polygons):
     
 def normalize_inputs(radius, n_curves, rotations, wave):
     #0.2 - 4.0
-    radius = radius * 3.8 + 0.2
-    n_curves = int(math.floor(n_curves * 20)) + 3
-    rotations = int(math.floor(rotations * 12)) + 1
-    wave = wave * 6 + 0.5
+    radius = radius * 1 + 0.1
+    n_curves = int(math.floor(n_curves * 8)) + 3
+    rotations = int(math.floor(rotations * 6)) + 1
+    wave = wave * 3 + 0.5
     return (radius, n_curves, rotations, wave)
 
 def RunCommand( is_interactive ):
