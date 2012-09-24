@@ -73,8 +73,8 @@ def copy_shapes(shapes):
     rs.MoveObjects(new_shapes,(0,-16,0))
     return new_shapes
 
-def run(radius, n_curves, rotations, wave):
-    random.seed(3)
+def run(radius, n_curves, rotations, wave, seed):
+    random.seed(seed)
     border = create_border()
     curves1 = create_base_pattern_curves(border, n_curves, rotations)
     #curves2 = copy_shapes(curves1)
@@ -86,19 +86,21 @@ def run(radius, n_curves, rotations, wave):
     #fit_scene(shapes2)
     
 def fit_scene(polygons):
+    rs.ScaleObjects(polygons, ORIGIN, (2,2,2))
     b = rs.BoundingBox(polygons)
     trs = (0, -b[0][1], 0)
     rs.MoveObjects(polygons, trs)
     rs.RotateObjects(polygons, (0,0,0), -100, rs.VectorCreate((0,0,0),(10,0,0)))
     rs.RotateObjects(polygons, (0,0,0), 200.4)
     
-def normalize_inputs(radius, n_curves, rotations, wave):
+def normalize_inputs(radius, n_curves, rotations, wave, seed):
     #0.2 - 4.0
-    radius = radius * 1 + 0.1
-    n_curves = int(math.floor(n_curves * 8)) + 3
+    radius = radius * 0.6 + 0.1
+    #seed = int(
+    n_curves = int(math.floor(n_curves * 9)) + 1
     rotations = int(math.floor(rotations * 6)) + 1
     wave = wave * 3 + 0.5
-    return (radius, n_curves, rotations, wave)
+    return (radius, n_curves, rotations, wave, seed)
 
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
@@ -106,11 +108,13 @@ def RunCommand( is_interactive ):
     a2_o = Rhino.Input.Custom.OptionDouble(0.21)
     a3_o = Rhino.Input.Custom.OptionDouble(0.2)
     a4_o = Rhino.Input.Custom.OptionDouble(0.2)
+    a5_o = Rhino.Input.Custom.OptionDouble(0.2)
     
     go.AddOptionDouble("a1", a1_o)
     go.AddOptionDouble("a2", a2_o)
     go.AddOptionDouble("a3", a3_o)
     go.AddOptionDouble("a4", a4_o)
+    go.AddOptionDouble("a5", a5_o)
     go.AcceptNothing(True)
     while True:
         if go.Get()!=Rhino.Input.GetResult.Option:
@@ -120,13 +124,14 @@ def RunCommand( is_interactive ):
     a2 = a2_o.CurrentValue
     a3 = a3_o.CurrentValue
     a4 = a4_o.CurrentValue
+    a5 = a5_o.CurrentValue
     #text = rs.GetString()
     text = 'aa'
     
-    (radius, n_curves, rotations, wave) = normalize_inputs(a1,a2, a3, a4)
+    (radius, n_curves, rotations, wave, seed) = normalize_inputs(a1,a2, a3, a4,a5)
    
     rs.EnableRedraw(False)
-    run(radius, n_curves, rotations, wave)
+    run(radius, n_curves, rotations, wave, seed)
     rs.EnableRedraw(True)
     
 if( __name__=="__main__" ):
