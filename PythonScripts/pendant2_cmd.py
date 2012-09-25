@@ -90,8 +90,8 @@ def fit_scene(polygons):
     b = rs.BoundingBox(polygons)
     trs = (0, -b[0][1], 0)
     rs.MoveObjects(polygons, trs)
-    rs.RotateObjects(polygons, (0,0,0), -100, rs.VectorCreate((0,0,0),(10,0,0)))
-    rs.RotateObjects(polygons, (0,0,0), 200.4)
+    rs.RotateObjects(polygons, (0,0,0), -85, rs.VectorCreate((0,0,0),(10,0,0)))
+    rs.RotateObjects(polygons, (0,0,0), 190.4)
     
 def normalize_inputs(radius, n_curves, rotations, wave, seed):
     #0.2 - 4.0
@@ -105,8 +105,8 @@ def normalize_inputs(radius, n_curves, rotations, wave, seed):
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
     a1_o = Rhino.Input.Custom.OptionDouble(0.2)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.21)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.2)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.4)
     a4_o = Rhino.Input.Custom.OptionDouble(0.2)
     a5_o = Rhino.Input.Custom.OptionDouble(0.2)
     
