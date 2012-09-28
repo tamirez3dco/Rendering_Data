@@ -52,7 +52,7 @@ def rotate_shapes(shapes, rotations):
         
 def project_shape(frame, radius, wave):
     distance = rs.Distance(frame.Origin, ORIGIN)
-    height = 2 + ((1 + math.sin(distance*wave)) / 2)
+    height = 0.25 + ((1 + math.sin(distance*wave)) / 2)
     #print height
     #height = random.uniform(0.1,0.5)
     pipe_path = rs.AddLine(frame.Origin, (frame.Origin[0], frame.Origin[1], height))
