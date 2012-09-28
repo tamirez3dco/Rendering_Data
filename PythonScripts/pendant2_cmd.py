@@ -35,21 +35,24 @@ def create_base_pattern_curves(border, num_curves, rotations):
         curves.append(c)
         
     all_curves = curves
-    deg = 360.0 / float(rotations)
-    for j in range(rotations):
-        new_curves = rs.RotateObjects(curves, ORIGIN, deg*j, None, True)
-        all_curves = all_curves+new_curves
-        
+ 
     return all_curves
     
 #def create_base_pattern_curves(border, num_curves, rotations):
     #c = rs.AddLine(fr1.Origin, fr2.Origin)
     #mid_point = rs.CurveMidPoint(c)
     
-
+def rotate_shapes(shapes, rotations):
+    deg = 360.0 / float(rotations)
+    all_shapes = shapes
+    for j in range(rotations):
+        new_shapes = rs.RotateObjects(shapes, ORIGIN, deg*j, None, True)
+        all_shapes = all_shapes+new_shapes
+    return all_shapes
+        
 def project_shape(frame, radius, wave):
     distance = rs.Distance(frame.Origin, ORIGIN)
-    height = 0.1 + ((1 + math.sin(distance*wave)) / 2)
+    height = 2 + ((1 + math.sin(distance*wave)) / 2)
     #print height
     #height = random.uniform(0.1,0.5)
     pipe_path = rs.AddLine(frame.Origin, (frame.Origin[0], frame.Origin[1], height))
@@ -81,8 +84,9 @@ def run(radius, n_curves, rotations, wave, seed):
     shapes1 = project_shapes(curves1, radius, wave)
     #shapes2 = project_shapes(curves2, radius, wave)
     #copy_shapes(shapes)
+    all_shapes=rotate_shapes(shapes1, rotations)
     rs.DeleteObjects(curves1)
-    fit_scene(shapes1)
+    fit_scene(all_shapes)
     #fit_scene(shapes2)
     
 def fit_scene(polygons):
