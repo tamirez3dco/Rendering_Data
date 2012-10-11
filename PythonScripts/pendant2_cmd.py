@@ -46,7 +46,7 @@ def AddMeshCylinder(base, height, radius, cap=True):
         circle = Rhino.Geometry.Circle(base, radius)
         cylinder = Rhino.Geometry.Cylinder(circle, height)
     
-    mesh = Rhino.Geometry.Mesh.CreateFromCylinder(cylinder, 5, 20)
+    mesh = Rhino.Geometry.Mesh.CreateFromCylinder(cylinder, 1, 20)
     id = scriptcontext.doc.Objects.AddMesh(mesh)
     #brep = cylinder.ToBrep(cap, cap)
     #id = scriptcontext.doc.Objects.AddBrep(brep)
