@@ -31,6 +31,7 @@ def AddMeshCylinder(base, height, radius, cap=True):
     """
     cylinder=None
     height_point = rhutil.coerce3dpoint(height)
+    mesh_x_faces = (math.floor(((math.floor(radius*10)-1)/2.0))+1)*6
     if height_point:
         #base must be a point
         base = rhutil.coerce3dpoint(base, True)
@@ -46,7 +47,7 @@ def AddMeshCylinder(base, height, radius, cap=True):
         circle = Rhino.Geometry.Circle(base, radius)
         cylinder = Rhino.Geometry.Cylinder(circle, height)
     
-    mesh = Rhino.Geometry.Mesh.CreateFromCylinder(cylinder, 1, 20)
+    mesh = Rhino.Geometry.Mesh.CreateFromCylinder(cylinder, 1, mesh_x_faces)
     id = scriptcontext.doc.Objects.AddMesh(mesh)
     #brep = cylinder.ToBrep(cap, cap)
     #id = scriptcontext.doc.Objects.AddBrep(brep)
