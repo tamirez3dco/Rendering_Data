@@ -4,6 +4,9 @@ import scriptcontext
 import Rhino
 import itertools
 import random
+import System.Guid
+import rhinoscript.utility as rhutil
+import rhinoscript.object as rhobject
 
 __commandname__ = "pendant2"
 
@@ -11,6 +14,45 @@ ORIGIN = (0,0,0)
 X0 = (1,0,0)
 Y0 = (0,1,0)
 Z0 = (0,0,1)
+
+def AddMeshCylinder(base, height, radius, cap=True):
+    """Adds a cylinder-shaped polysurface to the document
+    Parameters:
+      base = The 3D base point of the cylinder or the base plane of the cylinder
+      height = if base is a point, then height is a 3D height point of the
+        cylinder. The height point defines the height and direction of the
+        cylinder. If base is a plane, then height is the numeric height value
+        of the cylinder
+      radius = radius of the cylinder
+      cap[opt] = cap the cylinder
+    Returns:
+      identifier of new object if successful
+      None on error
+    """
+    cylinder=None
+    height_point = rhutil.coerce3dpoint(height)
+    if height_point:
+        #base must be a point
+        base = rhutil.coerce3dpoint(base, True)
+        normal = height_point-base
+        plane = Rhino.Geometry.Plane(base, normal)
+        height = normal.Length
+        circle = Rhino.Geometry.Circle(plane, radius)
+        cylinder = Rhino.Geometry.Cylinder(circle, height)
+    else:
+        #base must be a plane
+        if type(base) is Rhino.Geometry.Point3d: base = [base.X, base.Y, base.Z]
+        base = rhutil.coerceplane(base, True)
+        circle = Rhino.Geometry.Circle(base, radius)
+        cylinder = Rhino.Geometry.Cylinder(circle, height)
+    
+    mesh = Rhino.Geometry.Mesh.CreateFromCylinder(cylinder, 5, 20)
+    id = scriptcontext.doc.Objects.AddMesh(mesh)
+    #brep = cylinder.ToBrep(cap, cap)
+    #id = scriptcontext.doc.Objects.AddBrep(brep)
+    if id==System.Guid.Empty: return scriptcontext.errorhandler()
+    scriptcontext.doc.Views.Redraw()
+    return id
 
 def create_border():
     border = rs.AddCircle(rs.WorldXYPlane(), 10)
@@ -58,8 +100,12 @@ def project_shape(frame, radius, wave):
     pipe_path = rs.AddLine(frame.Origin, (frame.Origin[0], frame.Origin[1], height))
     #rs.AddPipe(
     #return rs.AddPipe(pipe_path, rs.CurveDomain(pipe_path),  [radius,radius], cap=2)
-    return rs.AddCylinder(frame.Origin, height, radius) 
-    return rs.AddSphere(frame,radius)
+    c = AddMeshCylinder(frame.Origin, height, radius)
+    return c
+    #return Rhino.Geometry.Mesh.CreateFromCylinder(rs.coercegeometry(c), 10,10)
+    
+    #return rs.AddCylinder(frame.Origin, height, radius) 
+    #return rs.AddSphere(frame,radius)
     #rs.AddLoftSrf(
     
 def project_shapes(curves, radius, wave):
