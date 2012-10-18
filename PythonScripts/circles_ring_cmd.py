@@ -80,14 +80,14 @@ def run(ring_rad_diff, n_ring_divisions, n_circle_divisions, width, hole, div_pi
 def RunCommand( is_interactive ):
     go = Rhino.Input.Custom.GetOption()
     
-    a1_o = Rhino.Input.Custom.OptionDouble(0.3)
-    a2_o = Rhino.Input.Custom.OptionDouble(0.01)
-    a3_o = Rhino.Input.Custom.OptionDouble(0.3)
-    a4_o = Rhino.Input.Custom.OptionDouble(0.1)
-    a5_o = Rhino.Input.Custom.OptionDouble(0.4)
-    a6_o = Rhino.Input.Custom.OptionDouble(0.01)
-    a7_o = Rhino.Input.Custom.OptionDouble(0.01)
-    a8_o = Rhino.Input.Custom.OptionDouble(0.3)
+    a1_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a2_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a3_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a4_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a5_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a6_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a7_o = Rhino.Input.Custom.OptionDouble(0.5)
+    a8_o = Rhino.Input.Custom.OptionDouble(0.5)
     a9_o = Rhino.Input.Custom.OptionDouble(0.5)
      
     go.AddOptionDouble("a1", a1_o)
