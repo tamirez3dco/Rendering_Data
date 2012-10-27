@@ -48,8 +48,8 @@
             <chunk name="Projection">
               <items count="2">
                 <item name="Target" type_name="gh_drawing_point" type_code="30">
-                  <X>-356</X>
-                  <Y>-1784</Y>
+                  <X>-337</X>
+                  <Y>-1820</Y>
                 </item>
                 <item name="Zoom" type_name="gh_single" type_code="5">0.7999998</item>
               </items>
@@ -69,9 +69,9 @@
         </chunk>
         <chunk name="DefinitionObjects">
           <items count="1">
-            <item name="ObjectCount" type_name="gh_int32" type_code="3">119</item>
+            <item name="ObjectCount" type_name="gh_int32" type_code="3">122</item>
           </items>
-          <chunks count="119">
+          <chunks count="122">
             <chunk name="Object" index="0">
               <items count="2">
                 <item name="GUID" type_name="gh_guid" type_code="9">c552a431-af5b-46a9-a8a4-0fcbc27ef596</item>
@@ -2879,7 +2879,7 @@
                     </chunk>
                     <chunk name="Slider">
                       <items count="6">
-                        <item name="Value" type_name="gh_double" type_code="6">-15</item>
+                        <item name="Value" type_name="gh_double" type_code="6">-3.5</item>
                         <item name="Min" type_name="gh_double" type_code="6">-20</item>
                         <item name="Max" type_name="gh_double" type_code="6">0</item>
                         <item name="Digits" type_name="gh_int32" type_code="3">1</item>
@@ -7755,7 +7755,7 @@ Next Release.
                           <chunks count="1">
                             <chunk name="Item" index="0">
                               <items count="1">
-                                <item name="number" type_name="gh_double" type_code="6">-15</item>
+                                <item name="number" type_name="gh_double" type_code="6">-3.5</item>
                               </items>
                             </chunk>
                           </chunks>
@@ -8501,7 +8501,7 @@ Next Release.
                           <chunks count="1">
                             <chunk name="Item" index="0">
                               <items count="1">
-                                <item name="number" type_name="gh_double" type_code="6">1</item>
+                                <item name="number" type_name="gh_double" type_code="6">3</item>
                               </items>
                             </chunk>
                           </chunks>
@@ -8720,6 +8720,166 @@ Next Release.
                           </chunks>
                         </chunk>
                       </chunks>
+                    </chunk>
+                  </chunks>
+                </chunk>
+              </chunks>
+            </chunk>
+            <chunk name="Object" index="119">
+              <items count="2">
+                <item name="GUID" type_name="gh_guid" type_code="9">7f5c6c55-f846-4a08-9c9a-cfdc285cc6fe</item>
+                <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+              </items>
+              <chunks count="1">
+                <chunk name="Container">
+                  <items count="13">
+                    <item name="Ca" type_name="gh_drawing_pointf" type_code="31">
+                      <X>638.8487</X>
+                      <Y>2513.334</Y>
+                    </item>
+                    <item name="Cb" type_name="gh_drawing_pointf" type_code="31">
+                      <X>651.3121</X>
+                      <Y>2513.334</Y>
+                    </item>
+                    <item name="Cc" type_name="gh_drawing_pointf" type_code="31">
+                      <X>651.3121</X>
+                      <Y>2531.667</Y>
+                    </item>
+                    <item name="Cd" type_name="gh_drawing_pointf" type_code="31">
+                      <X>638.8487</X>
+                      <Y>2531.667</Y>
+                    </item>
+                    <item name="Text" type_name="gh_string" type_code="10">2</item>
+                    <item name="Size" type_name="gh_single" type_code="5">25</item>
+                    <item name="Font" type_name="gh_string" type_code="10">Microsoft Sans Serif</item>
+                    <item name="Bold" type_name="gh_bool" type_code="1">true</item>
+                    <item name="Italic" type_name="gh_bool" type_code="1">false</item>
+                    <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="NickName" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="Description" type_name="gh_string" type_code="10">A quick note</item>
+                    <item name="InstanceGuid" type_name="gh_guid" type_code="9">6700f397-d812-4052-a81b-702e67cd944a</item>
+                  </items>
+                  <chunks count="1">
+                    <chunk name="Attributes">
+                      <items count="2">
+                        <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
+                          <X>638.8487</X>
+                          <Y>2513.334</Y>
+                        </item>
+                        <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                          <X>633.8487</X>
+                          <Y>2508.334</Y>
+                          <W>22.46338</W>
+                          <H>28.3335</H>
+                        </item>
+                      </items>
+                    </chunk>
+                  </chunks>
+                </chunk>
+              </chunks>
+            </chunk>
+            <chunk name="Object" index="120">
+              <items count="2">
+                <item name="GUID" type_name="gh_guid" type_code="9">7f5c6c55-f846-4a08-9c9a-cfdc285cc6fe</item>
+                <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+              </items>
+              <chunks count="1">
+                <chunk name="Container">
+                  <items count="13">
+                    <item name="Ca" type_name="gh_drawing_pointf" type_code="31">
+                      <X>636.3487</X>
+                      <Y>2412.084</Y>
+                    </item>
+                    <item name="Cb" type_name="gh_drawing_pointf" type_code="31">
+                      <X>648.6892</X>
+                      <Y>2412.084</Y>
+                    </item>
+                    <item name="Cc" type_name="gh_drawing_pointf" type_code="31">
+                      <X>648.6892</X>
+                      <Y>2430.717</Y>
+                    </item>
+                    <item name="Cd" type_name="gh_drawing_pointf" type_code="31">
+                      <X>636.3487</X>
+                      <Y>2430.717</Y>
+                    </item>
+                    <item name="Text" type_name="gh_string" type_code="10">3</item>
+                    <item name="Size" type_name="gh_single" type_code="5">25</item>
+                    <item name="Font" type_name="gh_string" type_code="10">Microsoft Sans Serif</item>
+                    <item name="Bold" type_name="gh_bool" type_code="1">true</item>
+                    <item name="Italic" type_name="gh_bool" type_code="1">false</item>
+                    <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="NickName" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="Description" type_name="gh_string" type_code="10">A quick note</item>
+                    <item name="InstanceGuid" type_name="gh_guid" type_code="9">1c7b699f-5fc9-453d-bad6-92a7d2e16b85</item>
+                  </items>
+                  <chunks count="1">
+                    <chunk name="Attributes">
+                      <items count="3">
+                        <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
+                          <X>636.3487</X>
+                          <Y>2412.084</Y>
+                        </item>
+                        <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                          <X>631.3487</X>
+                          <Y>2407.084</Y>
+                          <W>22.34052</W>
+                          <H>28.6333</H>
+                        </item>
+                        <item name="Selected" type_name="gh_bool" type_code="1">true</item>
+                      </items>
+                    </chunk>
+                  </chunks>
+                </chunk>
+              </chunks>
+            </chunk>
+            <chunk name="Object" index="121">
+              <items count="2">
+                <item name="GUID" type_name="gh_guid" type_code="9">7f5c6c55-f846-4a08-9c9a-cfdc285cc6fe</item>
+                <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+              </items>
+              <chunks count="1">
+                <chunk name="Container">
+                  <items count="13">
+                    <item name="Ca" type_name="gh_drawing_pointf" type_code="31">
+                      <X>638.8487</X>
+                      <Y>3029.584</Y>
+                    </item>
+                    <item name="Cb" type_name="gh_drawing_pointf" type_code="31">
+                      <X>646.015</X>
+                      <Y>3029.584</Y>
+                    </item>
+                    <item name="Cc" type_name="gh_drawing_pointf" type_code="31">
+                      <X>646.015</X>
+                      <Y>3047.917</Y>
+                    </item>
+                    <item name="Cd" type_name="gh_drawing_pointf" type_code="31">
+                      <X>638.8487</X>
+                      <Y>3047.917</Y>
+                    </item>
+                    <item name="Text" type_name="gh_string" type_code="10">1</item>
+                    <item name="Size" type_name="gh_single" type_code="5">25</item>
+                    <item name="Font" type_name="gh_string" type_code="10">Microsoft Sans Serif</item>
+                    <item name="Bold" type_name="gh_bool" type_code="1">true</item>
+                    <item name="Italic" type_name="gh_bool" type_code="1">false</item>
+                    <item name="Name" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="NickName" type_name="gh_string" type_code="10">Scribble</item>
+                    <item name="Description" type_name="gh_string" type_code="10">A quick note</item>
+                    <item name="InstanceGuid" type_name="gh_guid" type_code="9">79f3049e-5d69-44fc-b005-6e6fc608d0db</item>
+                  </items>
+                  <chunks count="1">
+                    <chunk name="Attributes">
+                      <items count="2">
+                        <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
+                          <X>638.8487</X>
+                          <Y>3029.584</Y>
+                        </item>
+                        <item name="Bounds" type_name="gh_drawing_rectanglef" type_code="35">
+                          <X>633.8487</X>
+                          <Y>3024.584</Y>
+                          <W>17.16632</W>
+                          <H>28.3335</H>
+                        </item>
+                      </items>
                     </chunk>
                   </chunks>
                 </chunk>
