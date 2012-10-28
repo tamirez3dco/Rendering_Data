@@ -48,8 +48,8 @@
             <chunk name="Projection">
               <items count="2">
                 <item name="Target" type_name="gh_drawing_point" type_code="30">
-                  <X>-268</X>
-                  <Y>-1501</Y>
+                  <X>-269</X>
+                  <Y>-1534</Y>
                 </item>
                 <item name="Zoom" type_name="gh_single" type_code="5">0.6399998</item>
               </items>
@@ -8603,7 +8603,7 @@ Next Release.
                   </items>
                   <chunks count="1">
                     <chunk name="Attributes">
-                      <items count="3">
+                      <items count="2">
                         <item name="Pivot" type_name="gh_drawing_pointf" type_code="31">
                           <X>610.0987</X>
                           <Y>2400.834</Y>
@@ -8614,7 +8614,6 @@ Next Release.
                           <W>22.98138</W>
                           <H>28.26172</H>
                         </item>
-                        <item name="Selected" type_name="gh_bool" type_code="1">true</item>
                       </items>
                     </chunk>
                   </chunks>
@@ -8740,7 +8739,7 @@ Next Release.
     Select Case xi
       Case 0
         A = 1
-        B = 10
+        B = 4
       Case 1
         A = 3
         B = 9
